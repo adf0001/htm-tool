@@ -1,0 +1,153 @@
+﻿<html>
+<head>
+<meta charset='utf-8'>
+
+<script src='../htm-tool.js' ht-var-name='ht'></script>
+
+</head>
+<body onload="onBodyLoad()">
+
+<table style='width:100%;'><tr>
+	<td onclick="onClickItem(arguments[0])" id='spCmdList' valign='top' style='width:45%;'>
+	</td>
+	<td valign='top' style='width:45%;'>
+		name<br>
+		<input id='inpName' type='text' readonly style='background:#eee;'></input><br>
+		code<br>
+		<textarea id='txtCode' wrap='off' style="width:95%;height:10em;"></textarea><br>
+		<button onclick="runItem()" id='btnRun'>run</button>
+		<hr>
+		<div id='divResult'></div>
+		<div id='divResult2'></div>
+		<div id='divResult3'></div>
+	</td>
+</tr></table>
+
+</body>
+<script>
+	var itemSet={
+		"ele()": "ht.ele('divResult')==document.getElementById('divResult')",
+		"eleSibling()": "ht.eleSibling(ht('divResult2'),1)===ht('divResult3')",
+		"dateString19()": "ht.dateString19(new Date(2000,1,3,4,5,6))==='2000-02-03 04:05:06'",
+		"dateString14()": "ht.dateString14(new Date(2000,1,3,4,5,6))==='20000203040506'",
+		"dateDiffStr()": "ht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7))==='1天1时1分'",
+		"dateDiffStr()/2": "ht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7),1)==='1d 1h 1m'",
+		"addCssText()":	"ht.addCssText('#divResult3{height:200px}');\n"+
+						"ht('divResult3').offsetHeight===200;",
+		"httpRequest()":
+						"ht.httpRequest('http://myip.ipip.net','GET','',\n"+
+							"\tfunction(responseText){ht('divResult2').textContent=responseText; setOk('httpRequest()'); }\n"+
+						");",
+		"httpRequestJson()":
+						"ht.httpRequestJson('http://myip.ipip.net/json','GET','',\n"+
+							"\tfunction(json, responseText){ht('divResult2').textContent=JSON.stringify(json); setOk('httpRequestJson()'); }\n"+
+						");",
+		"css.ht-cmd":
+						"\"<span class='ht-cmd'>cmd style sample</span>\"",
+		"tab-control":
+						"ht('divResult2').innerHTML=\n"+
+						"\"<div class='ht-tab-group'>\\\n"+
+							"\t<span class='ht-tab-item ht-tab-item-selected' id='spTab1' onclick=\\\"htm_tool.selectTabItem('top','spTab1','divTab1')\\\">Tab1</span>\\\n"+
+							"\t<span class='ht-tab-item' id='spTab2' onclick=\\\"htm_tool.selectTabItem('top','spTab2','divTab2')\\\">Tab2</span>\\\n"+
+						"</div>\\\n"+
+						"<div id='divTab1'><b>tab1 content</b></div>\\\n"+
+						"<div id='divTab2' style='display:none;'><i>tab2 content</i></div>\\\n"+
+						"\"\n\n"+
+						"ht('spTab1').click();\n"+
+						"'ui test'"
+						,
+		"showLog()":
+						"htm_tool.showLog('some log message');\n'log ui'",
+		"startDrag()":
+						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='htm_tool.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1') )\\\">drag 2</span>\"",
+		"showPopup()/hidePopup()":
+						"ht('divResult2').innerHTML=\n"+
+						"\"<div id='divPopup1' class='ht-popup' style='display:none;'>\\\n" +
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+								"\t\tpopup-1<hr>This is popup-1.\\\n"+
+							"\t</div>\\\n"+
+						"</div>\\\n" +
+						"<div id='divPopup2' class='ht-popup' style='display:none;'>\\\n" +
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+								"\t\tpopup-2<hr>This is popup-2, modal. <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup2</span>, will fail <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup3',1)\\\">popup3</span>, maybe fail <br> \\\n"+
+								"\t\t<center><button onclick=\\\"htm_tool.hidePopup('divPopup2')\\\">close</button></center>\\\n"+
+							"\t</div>\\\n"+
+						"</div>\\\n" +
+						"<div id='divPopup3' class='ht-popup' style='display:none;'>\\\n" +
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+								"\t\tpopup-3<hr>This is popup-3, stack. <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2')\\\">popup2</span>, modaless, maybe fail <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup3',1)\\\">popup3</span>, will fail <br> \\\n"+
+								"\t\t<center><button onclick=\\\"htm_tool.hidePopup('divPopup3','fromClose')\\\">close</button></center>\\\n"+
+							"\t</div>\\\n"+
+						"</div>\\\n" +
+						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup-1</button> \\\n"+
+						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup-2, modal</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.showPopup('divPopup3',1,function(err,data){alert('popup3 at btn returned: error='+err+', data='+data);})\\\">popup-3, stack</button> \\\n"+
+						"\"\n\n"+
+						"ht('btnOpenPopup1').click();\n"+
+						"'ui test'"
+						,
+		"showPopupHtml()":
+						"ht('divResult2').innerHTML=\n"+
+						"\"<label><input id='chkModaless' type='checkbox' checked></input>modal / default</label><br>\\\n"+
+						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopupHtml('title-1<hr>message-1',htm_tool('chkModaless').checked)\\\">showPopupHtml()</button> \\\n"+
+						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.alert('message-2',htm_tool('chkModaless').checked )\\\">alert()</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.confirm('message-3',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">confirm()</button> \\\n"+
+						"<button id='btnOpenPopup4' onclick=\\\"htm_tool.confirmYnc('message-4',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">confirmYnc()</button> \\\n"+
+						"<button id='btnOpenPopup5' onclick=\\\"htm_tool.prompt('message-5','default-value',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">prompt()</button> \\\n"+
+						
+						"<button id='btnOpenPopupS' onclick=\\\"htm_tool.showPopupHtml(popupHtmlStackHtml+'<br>'+(new Date()),htm_tool('chkModaless').checked)\\\">showPopupHtml-stack</button> \\\n"+
+						"\";\n\n"+
+						
+						"window.popupHtmlStackHtml= \"title-S<hr>message-S <span class='ht-cmd' onclick='openPopupHtmlStack()'>open another</span>\";\n\n"+
+						"window.openPopupHtmlStack= function(){htm_tool('btnOpenPopupS').click();};\n\n"+
+						"'ui test'"
+						,
+	};
+	
+	function runItem(){
+		try{
+			var ret= eval(ht('txtCode').value);
+		}
+		catch(ex){
+			console.log(ex);
+			ht('divResult').textContent= ex;
+			return;
+		}
+		ht('divResult').innerHTML= ht.dateString19(new Date()).slice(-8) + " / " + ht('inpName').value + "<br>" + ret;
+		
+		return ret;
+	}
+	
+	function onClickItem(evt){
+		var el= evt.target;
+		if( ! el.tagName=="SPAN" || el.className.indexOf("ht-cmd")<0 ) return;
+		
+		var name= el.textContent;
+		if( !itemSet[name] ) return;
+		ht('inpName').value= name;
+		ht('txtCode').value= itemSet[name];
+		ht('divResult').innerHTML= "";
+		ht('divResult2').innerHTML= "";
+		ht('divResult3').innerHTML= "";
+		
+		if( runItem() ) setOk(name);
+	}
+	
+	function onBodyLoad(){
+		ht('spCmdList').innerHTML=  Object.keys(itemSet).map( function(v){return "<span class='ht-cmd' name=\""+v+"\">" +v+"</span>\n";});
+	}
+	
+	function setOk(name){
+		ht('spCmdList').querySelector("span[name='"+name+"']").style.background="lime";
+	}
+	
+</script>
+</html>
+

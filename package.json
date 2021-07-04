@@ -1,0 +1,22 @@
+{
+  "name": "htm-tool",
+  "version": "1.0.0",
+  "description": "htm tool",
+  "main": "htm-tool.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adf0001/htm-tool.git"
+  },
+  "author": "fwg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adf0001/htm-tool/issues"
+  },
+  "homepage": "https://github.com/adf0001/htm-tool#readme"
+}
