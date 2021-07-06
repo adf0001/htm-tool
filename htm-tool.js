@@ -76,7 +76,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	htm_tool.httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
 		var options = (typeof methodOrOptions==="string")?  { method: methodOrOptions, } : methodOrOptions ;
 
-		var xq = window.ActiveXObject ? (new ActiveXObject("Msxml2.XMLHTTP")) : (new XMLHttpRequest());
+		var xq = new XMLHttpRequest();
 		
 		xq.open( options.method, url, true);
 		if( options.headers ){
@@ -270,68 +270,17 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	
 	/*
 	//////////////////////////////////////////////////////////////////////////////////////////
-	// drag tool
+	// drag tool, support mouse and multiple touches.
 	
 		example:
 			
-			<div onmousedown="htm_tool.startDrag( arguments[0], this )">...</div>
+			<div onmousedown="htm_tool.startDrag( arguments[0], this )" ontouchstart="htm_tool.startDrag( arguments[0], this )">...</div>
 	*/
 
 	var dragObject= {
-		itemArray: null,	//[ [el1, x0_1, y0_1], [el2, x0_2, y0_2], ...]
-		screenX0: 0,
-		screenY0: 0,
 		
-		onMove: function (evt) {
-			if( this!== dragObject ) return dragObject.onMove(evt);		//active `this`
-			
-			if (!this.itemArray) return;
-
-			var dx = evt.screenX - this.screenX0;
-			var dy = evt.screenY - this.screenY0;
-
-			var i, imax = this.itemArray.length, ai;
-			for (i = 0; i < imax; i++) {
-				ai = this.itemArray[i];
-				ai[0].style.left = (ai[1] + dx) + "px";
-				ai[0].style.top = (ai[2] + dy) + "px";
-			}
-		},
-		
-		onStop: function ( evt ) {
-			if( this!== dragObject ) return dragObject.onStop(evt);		//active `this`
-			
-			if (!this.itemArray) return;
-			
-			if( evt===false ){
-				//reset x,y
-				this.onMove( {screenX:this.screenX0,screenY:this.screenY0 } )
-			}
-
-			this.itemArray = null;
-
-			if (window.ActiveXObject) {
-				document.body.detachEvent("onmousemove", this.onMove);
-				document.body.detachEvent("onmouseup", this.onStop);
-				document.body.detachEvent("onkeyup", this.onKey);
-			}
-			else {
-				document.removeEventListener("mousemove", this.onMove, false);
-				document.removeEventListener("mouseup", this.onStop, false);
-				document.removeEventListener("keyup", this.onKey, false);
-			}
-		},
-		
-		onKey: function (evt) {
-			if( this!== dragObject ) return dragObject.onKey(evt);		//active `this`
-			
-			if (!this.itemArray) return;
-
-			var keyCode= evt.keyCode||evt.which||evt.charCode;
-			
-			if (keyCode==27){ this.onStop( false ); }		//ESC to reset
-			else{ this.onStop(); }		//others to stop
-		},
+		dragSet: {},	//map drag start-key to drag start item; drag item: {itemArray,pageX0,pageY0,from,elStart,key}
+		dragSetCount: 0,
 		
 		//onStart: function ( evt, el1, el2, ..., elN )
 		onStart: function ( evt, el1) {
@@ -345,30 +294,154 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 				return false;
 			}
 			
-			if (this.itemArray) this.onStop();
+			//unify event and drag-data
+			var dragEvt, dragItem, evtKey;
+			if( evt.type=="mousedown" ){
+				dragEvt= evt;
+				dragItem= { from:"mouse", elStart: evt.target, key:"mouse", };
+				
+				if ("mouse" in this.dragSet) this.onStop({type:"mouseup"});
+			}
+			else if( evt.type=="touchstart" ){
+				dragEvt= evt.targetTouches[0];	//only the 1st
+				evtKey= "touch-"+dragEvt.identifier;
+				dragItem= { from:"touch", elStart: evt.target, key: evtKey, };
+				
+				if ( evtKey in this.dragSet) this.onStop({type:"touchend",changedTouches:[{identifier:dragEvt.identifier}]});
+			}
+			else{ return false; }	//unknown event
 			
-			this.screenX0 = evt.screenX;
-			this.screenY0 = evt.screenY;
-
-			this.itemArray = [];
-
+			//init drag-data
+			dragItem.pageX0 = dragEvt.pageX;
+			dragItem.pageY0 = dragEvt.pageY;
+			
+			dragItem.itemArray = [];
 			var i, imax = arguments.length, el;
 			for (i = 1; i < imax; i++) {
 				el = arguments[i];
-				this.itemArray.push([el, parseInt(el.style.left)||0, parseInt(el.style.top)||0]);
+				dragItem.itemArray.push([el, parseInt(el.style.left)||0, parseInt(el.style.top)||0]);
 			}
+			
+			this.dragSet[dragItem.key]= dragItem;
+			this.dragSetCount++;
 
-			if (window.ActiveXObject) {
-				document.body.attachEvent("onmousemove", this.onMove);
-				document.body.attachEvent("onmouseup", this.onStop);
-				document.body.attachEvent("onkeyup", this.onKey);
-			}
-			else {
+			if( this.dragSetCount===1 ){
+				//global listener
 				document.addEventListener("mousemove", this.onMove, false);
 				document.addEventListener("mouseup", this.onStop, false);
 				document.addEventListener("keyup", this.onKey, false);
+				document.addEventListener('touchmove',this.onMove,{passive:false});
+				document.addEventListener('touchend',this.onStop,false);
 			}
 		},
+		
+		//return pairs array of [ evt1, dragItem1, evt2, dragItem2, ... ]
+		getEventList: function( evt ){
+			var list=[];
+			var keyType= evt.type.slice(0,5);
+			
+			if( keyType=="mouse" ){
+				list.push( evt, this.dragSet["mouse"] );
+			}
+			else if( keyType=="touch" ){
+				var touchList= (evt.type=="touchend") ? evt.changedTouches : evt.targetTouches;
+				var i,imax= touchList.length,k;
+				for(i=0;i<imax;i++){
+					k= "touch-" + touchList[i].identifier;
+					if(k in this.dragSet) list.push( touchList[i], this.dragSet[k] );
+				}
+			}
+			else{ return null; }	//unknown event
+			
+			return (list.length>0)?list:null;
+		},
+		
+		onStop: function ( evt ) {
+			if( this!== dragObject ) return dragObject.onStop(evt);		//active `this`
+			
+			//reset all
+			if( evt===false ){
+				for( var i in this.dragSet ){
+					var dragItem= this.dragSet[i];
+					var j,jmax=dragItem.itemArray.length,ai;
+					for(j=0;j<jmax;j++){
+						ai = dragItem.itemArray[j];
+						ai[0].style.left = ai[1] + "px";
+						ai[0].style.top = ai[2] + "px";
+					}
+				}
+			}
+			
+			if( evt ){
+				var list= this.getEventList( evt );
+				if( !list ) return false;
+				
+				var i,imax= list.length,dragItem;
+				for(i=0;i<imax;i+=2){
+					dragItem= list[i+1];
+					if( dragItem.key in this.dragSet ){
+						delete this.dragSet[dragItem.key];
+						this.dragSetCount--;
+					}
+				}
+			}
+			else{
+				//stop all
+				this.dragSet={};
+				this.dragSetCount=0;
+			}
+			
+			
+			if( this.dragSetCount<1 ){
+				//remove global listener
+				console.log("release drag listener");
+				document.removeEventListener("mousemove", this.onMove, false);
+				document.removeEventListener("mouseup", this.onStop, false);
+				document.removeEventListener("keyup", this.onKey, false);
+				document.removeEventListener('touchmove',this.onMove,{passive:false});
+				document.removeEventListener('touchend',this.onStop,false);
+			}
+			
+			if( this.dragSetCount<0 ){
+				console.error("dragSetCount abnormal, "+ this.dragSetCount);
+				this.onStop(false);	//stop all
+				this.dragSetCount=0;
+			}
+		},
+		
+		onMove: function (evt) {
+			if( this!== dragObject ) return dragObject.onMove(evt);		//active `this`
+			
+			var list= this.getEventList( evt );
+			if( !list ) return false;
+			
+			var i,imax= list.length,dragItem;
+			for(i=0;i<imax;i+=2){
+				dragItem= list[i+1];
+				
+				var dx = list[i].pageX - dragItem.pageX0;
+				var dy = list[i].pageY - dragItem.pageY0;
+				
+				var j, jmax = dragItem.itemArray.length, ai;
+				for (j = 0; j < jmax; j++) {
+					ai = dragItem.itemArray[j];
+					ai[0].style.left = (ai[1] + dx) + "px";
+					ai[0].style.top = (ai[2] + dy) + "px";
+				}
+			}
+			
+			if( evt.type=="touchmove" ){ evt.preventDefault(); }
+		},
+		
+		onKey: function (evt) {
+			if( this!== dragObject ) return dragObject.onKey(evt);		//active `this`
+			
+			var keyCode= evt.keyCode||evt.which||evt.charCode;
+			
+			if (keyCode==27){ this.onStop( false ); }		//ESC to reset
+			else{ this.onStop(); }		//others to stop
+		},
+		
 	};
 	
 	//----------------------------------------------------------------------------------------
@@ -382,7 +455,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	
 		example:
 			<div id='divPopup1' class='ht-popup' style='display:none;'>
-				<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>
+				<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this ) ontouchstart=='htm_tool.startDrag( arguments[0], this )'>
 					popup-1<hr>This is popup-1.
 				</div>
 			</div>
@@ -548,7 +621,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		if( ! htm_tool(nm) ){
 			htm_tool.appendBodyHtml(
 				"<div id='"+nm+"' class='ht-popup' style='display:none;'>"+
-					"<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'></div>"+
+					"<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'></div>"+
 				"</div>"
 			);
 		}

@@ -1,6 +1,7 @@
 ﻿<html>
 <head>
 <meta charset='utf-8'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
 
 <script src='../htm-tool.js' ht-var-name='ht'></script>
 
@@ -59,17 +60,18 @@
 		"showLog()":
 						"htm_tool.showLog('some log message');\n'log ui'",
 		"startDrag()":
-						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='htm_tool.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
-						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1') )\\\">drag 2</span>\"",
+						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"htm_tool.startDrag( arguments[0], this )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this )\\\">drag 2</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\"",
 		"showPopup()/hidePopup()":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<div id='divPopup1' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-1<hr>This is popup-1.\\\n"+
 							"\t</div>\\\n"+
 						"</div>\\\n" +
 						"<div id='divPopup2' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-2<hr>This is popup-2, modal. <br> \\\n"+
 									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
 									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup2</span>, will fail <br> \\\n"+
@@ -78,7 +80,7 @@
 							"\t</div>\\\n"+
 						"</div>\\\n" +
 						"<div id='divPopup3' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-3<hr>This is popup-3, stack. <br> \\\n"+
 									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
 									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2')\\\">popup2</span>, modaless, maybe fail <br> \\\n"+
