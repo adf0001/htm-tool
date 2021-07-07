@@ -44,7 +44,12 @@
 							"\tfunction(json, responseText){ht('divResult2').textContent=JSON.stringify(json); setOk('httpRequestJson()'); }\n"+
 						");",
 		"css.ht-cmd":
-						"\"<span class='ht-cmd'>cmd style sample</span>\"",
+						"\"<span class='ht-cmd'>cmd .ht-cmd style sample</span>\"",
+		"css.ht-hover":
+						"\"<span class='ht-hover'>cmd .ht-hover style sample</span>\"",
+		"css.ht-selected/setSelected()":
+						"\"<span class='ht-selected'>cmd .ht-selected style sample</span>\\\n"+
+						"<div><span>111 </span><span>222 </span><span>333 </span><span>444 </span><label><input type=checkbox onchange='ht.setSelected([parentNode.parentNode.childNodes[0],parentNode.parentNode.childNodes[2]],[parentNode.parentNode.childNodes[1],parentNode.parentNode.childNodes[3]],this.checked);'></input>toggle</label></div>\"",
 		"tab-control":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<div class='ht-tab-group'>\\\n"+
@@ -90,7 +95,7 @@
 						"</div>\\\n" +
 						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup-1</button> \\\n"+
 						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup-2, modal</button> \\\n"+
-						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.showPopup('divPopup3',1,function(err,data){alert('popup3 at btn returned: error='+err+', data='+data);})\\\">popup-3, stack</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.showPopup('divPopup3',1,function(err,data){if(err||data)alert('popup3 at btn returned: error='+err+', data='+data);})\\\">popup-3, stack</button> \\\n"+
 						"\"\n\n"+
 						"ht('btnOpenPopup1').click();\n"+
 						"'ui test'"
@@ -100,11 +105,18 @@
 						"\"<label><input id='chkModaless' type='checkbox' checked></input>modal / default</label><br>\\\n"+
 						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopupHtml('title-1<hr>message-1',htm_tool('chkModaless').checked)\\\">showPopupHtml()</button> \\\n"+
 						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.alert('message-2',htm_tool('chkModaless').checked )\\\">alert()</button> \\\n"+
-						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.confirm('message-3',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">confirm()</button> \\\n"+
-						"<button id='btnOpenPopup4' onclick=\\\"htm_tool.confirmYnc('message-4',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">confirmYnc()</button> \\\n"+
-						"<button id='btnOpenPopup5' onclick=\\\"htm_tool.prompt('message-5','default-value',htm_tool('chkModaless').checked,function(err,data){alert('returned: error='+err+', data='+data);})\\\">prompt()</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.confirm('message-3',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirm()</button> \\\n"+
+						"<button id='btnOpenPopup4' onclick=\\\"htm_tool.confirmYnc('message-4',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirmYnc()</button> \\\n"+
+						"<button id='btnOpenPopup5' onclick=\\\"htm_tool.prompt('message-5','default-value',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">prompt()</button> \\\n"+
 						
 						"<button id='btnOpenPopupS' onclick=\\\"htm_tool.showPopupHtml(popupHtmlStackHtml+'<br>'+(new Date()),htm_tool('chkModaless').checked)\\\">showPopupHtml-stack</button> \\\n"+
+
+						"<button id='btnOpenPopupSelect' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'bbb',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()</button> \\\n"+
+						"<button id='btnOpenPopupSelect-2' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()-2</button> \\\n"+
+						"<button id='btnOpenPopupSelect2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()</button> \\\n"+
+						"<button id='btnOpenPopupSelect2-2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],null,htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-2</button> \\\n"+
+						"<button id='btnOpenPopupSelect2-3' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb '],'ccc','ccc2','ccc3','ccc4','ccc5','ccc6','ccc7','ccc8','ccc9','ccc10','ccc11','ccc12','ccc13','ccc14'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-3</button> \\\n"+
+
 						"\";\n\n"+
 						
 						"window.popupHtmlStackHtml= \"title-S<hr>message-S <span class='ht-cmd' onclick='openPopupHtmlStack()'>open another</span>\";\n\n"+

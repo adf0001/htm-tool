@@ -10,21 +10,20 @@
 		ht.showLog('message 2');	//only if the 'ht-var-name' attribute is set to 'ht' in <script>
 */
 
-if( typeof htm_tool === "undefined" || ! htm_tool ){
+(function(){
+	if( typeof htm_tool !== "undefined" && htm_tool ) return;	//already exists
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// public tool
 	
-	var htm_tool= function(id){ return document.getElementById(id);}
+	var ele= function(id){ return document.getElementById(id);}
 	
-	htm_tool.ele= htm_tool;
-	
-	htm_tool.eleSibling= function(el,offset){
+	var eleSibling= function(el,offset){
 		var m= el.id.match( /^(\D+)(\d+)$/ );
-		return htm_tool( m[1]+ (parseInt( m[2] )+ offset ));
+		return ele( m[1]+ (parseInt( m[2] )+ offset ));
 	}
 
-	htm_tool.dateString19= function (dt) {
+	var dateString19= function (dt) {
 		if( !dt ) dt= new Date();
 		
 		var s = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() +
@@ -32,11 +31,11 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		return s.replace(/\b(\d)\b/g, "0$1");
 	}
 
-	htm_tool.dateString14= function (dt) {
-		return htm_tool.dateString19(dt).replace(/\D+/g, "");
+	var dateString14= function (dt) {
+		return dateString19(dt).replace(/\D+/g, "");
 	}
 
-	htm_tool.dateDiffStr= function ( startTime, endTime, english ){
+	var dateDiffStr= function ( startTime, endTime, english ){
 		var usedTime = endTime - startTime; // 相差的毫秒数
 		var days = Math.floor(usedTime / (24 * 3600 * 1000)); // 计算出天数
 		var leavel = usedTime % (24 * 3600 * 1000); // 计算天数后剩余的时间
@@ -49,7 +48,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 			(days?(days + '天'):"") + (hours?(hours + '时'):"") + minutes + '分';
 	}
 
-	htm_tool.addCssText= function (cssText) {
+	var addCssText= function (cssText) {
 		var style = document.createElement("style");
 		style.type = "text/css";
 		try {
@@ -61,9 +60,25 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		document.getElementsByTagName("head")[0].appendChild(style);
 	}
 	
-	htm_tool.appendBodyHtml= function( htmlText ){
+	var appendBodyHtml= function( htmlText ){
 		document.body.insertAdjacentHTML( 'beforeend', htmlText );
-	},
+	}
+	
+	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
+		return el.querySelector( (head||"")+"["+attrName+"='"+ attrValue.replace(/(\<\>\'\"\:)/g,"\\$1")+"']"+(tail||""));
+	}
+	
+	var seed=0;
+	
+	var eleId= function (el, prefix) {
+		if (el.id) return el.id;
+		if (!prefix) prefix = "ht-id-";
+
+		var sid;
+		while (ele(sid = prefix + (++seed))) { };
+
+		return el.id = sid;
+	}
 	
 	/*
 		cb
@@ -73,7 +88,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 			method: "POST"/"GET"/...
 			options: { method:... , headers: {} }
 	*/
-	htm_tool.httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
+	var httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
 		var options = (typeof methodOrOptions==="string")?  { method: methodOrOptions, } : methodOrOptions ;
 
 		var xq = new XMLHttpRequest();
@@ -99,8 +114,8 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		cb
 			function( json, responseText, lastKey)
 	*/
-	htm_tool.httpRequestJson= function( url, methodOrOptions, postData, cb, lastKey ){
-		htm_tool.httpRequest(url, methodOrOptions, postData, function(responseText, lastKey){
+	var httpRequestJson= function( url, methodOrOptions, postData, cb, lastKey ){
+		httpRequest(url, methodOrOptions, postData, function(responseText, lastKey){
 			try{
 				var json= JSON.parse(responseText);
 				cb(json,responseText, lastKey)
@@ -119,7 +134,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 			<span class='ht-cmd' onclick="...">add</span>
 	*/
 	
-	htm_tool.addCssText(
+	addCssText(
 		".ht-cmd {"+
 			"color: green;"+
 			"text-decoration: underline;"+
@@ -127,9 +142,46 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 			"font-size: 9pt;"+
 		"}"+
 		".ht-cmd:hover{"+
-			"background:lightgrey;"+
-		"}"
+			"background:#eeeeee;"+
+		"}"+
+		".ht-hover:hover{"+
+			"background:#eeeeee;"+
+		"}"+
+		".ht-selected{"+
+			"background:lavender;"+
+		"}"+
+		".ht-selected:hover{"+
+			"background:#F0F0FA;"+
+		"}"+
+		""
 	);
+	
+	//.ht-selected tool
+	var setSelected= function( selectList, unselectList, selected ){
+		if( ! selected ) { var tmp=selectList; selectList=unselectList; unselectList=tmp; }	//exchange
+		
+		if( selectList ){
+			if( !(selectList instanceof Array)) selectList=[selectList];
+			
+			var i,imax= selectList.length,si;
+			for(i=0;i<imax;i++){
+				si= selectList[i];
+				if( typeof si==="string" ) si= ele(si);
+				if( !si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className+=" ht-selected";
+			}
+		}
+		
+		if( unselectList ){
+			if( !(unselectList instanceof Array)) unselectList=[unselectList];
+			
+			var i,imax= unselectList.length,si;
+			for(i=0;i<imax;i++){
+				si= unselectList[i];
+				if( typeof si==="string" ) si= ele(si);
+				if( si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className= si.className.replace(/(^|\s)ht-selected(\s|$)/g,"$1$2");
+			}
+		}
+	}
 
 	/*
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -150,13 +202,13 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	
 	var tabGroup= null;	//map group name to [idTab,idPanel]
 
-	htm_tool.selectTabItem= function ( group, idTab, idPanel ){
+	var selectTabItem= function ( group, idTab, idPanel ){
 		
 		//init
 		if( ! tabGroup ){
 			tabGroup={};
 			
-			htm_tool.addCssText(
+			addCssText(
 				".ht-tab-group{"+
 					"border-bottom:1px solid black;"+
 					"margin-bottom:0.5em;"+
@@ -197,17 +249,17 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		var el;
 		//hide last
 		if( lastTabItem[0] ){
-			el= htm_tool(lastTabItem[0]);
+			el= ele(lastTabItem[0]);
 			el.className= el.className.replace(/ht\-tab\-item\-selected/g,"").replace(/\s+/g," " );
 		}
 		if( lastTabItem[1] ){
-			htm_tool(lastTabItem[1]).style.display="none";
+			ele(lastTabItem[1]).style.display="none";
 		}
 		
 		//show selected
-		el= htm_tool(idTab);
+		el= ele(idTab);
 		el.className= (el.className+" ht-tab-item-selected").replace(/\s+/g," " );
-		if( idPanel ) htm_tool(idPanel).style.display="";
+		if( idPanel ) ele(idPanel).style.display="";
 		
 		lastTabItem[0]= idTab;
 		lastTabItem[1]= idPanel;
@@ -224,12 +276,12 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 
 	var tmidLog= null;	//log timer id
 
-	htm_tool.showLog= function( s ){
+	var showLog= function( s ){
 		
 		//init
-		var elLog= htm_tool("div-ht-log");
+		var elLog= ele("div-ht-log");
 		if( ! elLog ){
-			htm_tool.appendBodyHtml(
+			appendBodyHtml(
 				"<div id='div-ht-log' style='position:fixed;right:0.5em;bottom:0.5em;width:auto;height:auto;max-width:500px;background:white;border:1px solid gray;font-size:9pt;padding:0.5em;cursor:default;' onclick='htm_tool.showLog();'>"+
 					"<span id='sp-ht-log-close' class='ht-cmd' style='float:right;text-decoration:none;padding:0em 0.3em;' onclick='setTimeout( function(){ htm_tool.showLog(false);}, 0 );' title='关闭'>&times;</span>"+
 					"<span id='sp-ht-log-minimize' class='ht-cmd' style='display:none;float:right;text-decoration:none;padding:0em 0.3em;' onclick='setTimeout( function(){ htm_tool.showLog(null);}, 0 );' title='最小化'>&minus;</span>"+
@@ -237,14 +289,14 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 					"<div id='div-ht-log-content' style='display:none;'></div>"+
 				"</div>"
 			);
-			elLog= htm_tool("div-ht-log");
+			elLog= ele("div-ht-log");
 		}
 		
 		//----------------------------------------------------------------------------------------
 		
-		var el= htm_tool('div-ht-log-content');
-		var elMinimize= htm_tool('sp-ht-log-minimize');
-		var elClose= htm_tool('sp-ht-log-close');
+		var el= ele('div-ht-log-content');
+		var elMinimize= ele('sp-ht-log-minimize');
+		var elClose= ele('sp-ht-log-close');
 		
 		elLog.style.display="";
 		
@@ -253,7 +305,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 				el.removeChild(el.firstChild);
 			}
 			
-			var tms= htm_tool.dateString19();
+			var tms= dateString19();
 			el.innerHTML+="<div>* <span class='ht-cmd' onclick=\"this.textContent=this.title;this.style.color='green';this.onclick=this.className=this.title='';\" title='"+tms+"'>" + tms.slice(-8) + "</span> " + s + "</div>";
 			el.style.display= elMinimize.style.display= elClose.style.display= "";
 		}
@@ -290,7 +342,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 			if( !evt ) evt= window.event;
 			
 			//check if target is an input
-			if( evt.target.tagName.match( /^(input|button|textarea|select|option.*|a)$/i ) || (evt.target.className && evt.target.className.match("(ht-input|ht-cmd)(\s|$)") ) ){
+			if( evt.target.tagName.match( /^(input|button|textarea|select|option.*|a|label)$/i ) || (evt.target.className && evt.target.className.match("(ht-input|ht-cmd)(\s|$)") ) ){
 				return false;
 			}
 			
@@ -391,7 +443,6 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 				this.dragSetCount=0;
 			}
 			
-			
 			if( this.dragSetCount<1 ){
 				//remove global listener
 				console.log("release drag listener");
@@ -444,11 +495,6 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		
 	};
 	
-	//----------------------------------------------------------------------------------------
-	
-	//htm_tool.startDrag: function ( evt, el1, el2, ... )
-	htm_tool.startDrag= dragObject.onStart;
-
 	/*
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// popup panel tool
@@ -465,13 +511,13 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	
 	var popupStack= null;	//item: [el, cb ]
 	
-	htm_tool.showPopup= function( el, modal, cb ){
+	var showPopup= function( el, modal, cb ){
 		
 		//init
 		if( ! popupStack ) {
 			popupStack= [];
 			
-			htm_tool.addCssText(
+			addCssText(
 				".ht-popup{"+
 					"position:fixed;"+
 					"left:0px;"+
@@ -509,7 +555,7 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		
 		//----------------------------------------------------------------------------------------
 		
-		if( typeof el==="string" ) el= htm_tool(el);
+		if( typeof el==="string" ) el= ele(el);
 		
 		//check closed
 		while( popupStack.length>0 ){
@@ -562,8 +608,8 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		popupStack.push([el,cb]);
 	}
 	
-	htm_tool.hidePopup= function( el, data ){
-		if( typeof el==="string" ) el= htm_tool(el);
+	var hidePopup= function( el, data ){
+		if( typeof el==="string" ) el= ele(el);
 		
 		//find .ht-popup
 		while( el && (! el.className || ! el.className.match(/ht-popup(\s|$)/) ) ) { el=el.parentNode; }
@@ -601,13 +647,13 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 	
 	var POPUP_HTML_COUNT_MAX= 10;
 	
-	htm_tool.showPopupHtml= function( bodyHtml, modal, cb ){
+	var showPopupHtml= function( bodyHtml, modal, cb ){
 		
 		//find empty html
 		var i,nm,el;
 		for(i=1;i<=POPUP_HTML_COUNT_MAX;i++){
 			nm= "ht-popup-html-" + i;
-			el= htm_tool(nm);
+			el= ele(nm);
 			if( !el ) break;
 			if( el.style.display=="none" ) break;
 		}
@@ -618,41 +664,87 @@ if( typeof htm_tool === "undefined" || ! htm_tool ){
 		}
 		
 		//init
-		if( ! htm_tool(nm) ){
-			htm_tool.appendBodyHtml(
+		if( ! ele(nm) ){
+			appendBodyHtml(
 				"<div id='"+nm+"' class='ht-popup' style='display:none;'>"+
 					"<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'></div>"+
 				"</div>"
 			);
 		}
-		var elBody= htm_tool(nm).querySelector(".ht-popup-body");
+		var elBody= ele(nm).querySelector(".ht-popup-body");
 		elBody.innerHTML= bodyHtml;
 		
-		htm_tool.showPopup( nm, (typeof modal==="undefined")?1:modal, cb );
+		showPopup( nm, (typeof modal==="undefined")?1:modal, cb );
 	}
 	
-	htm_tool.alert= function( message, modal, cb ){
-		htm_tool.showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick='htm_tool.hidePopup(this)'>确定</button></span>",modal, cb );
+	var alert= function( message, modal, cb ){
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick='htm_tool.hidePopup(this)'>确定</button></span>",modal, cb );
 	}
-	htm_tool.confirm= function( message, modal, cb ){
-		htm_tool.showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'ok')\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+	var confirm= function( message, modal, cb ){
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'ok')\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
 	}
-	htm_tool.confirmYnc= function( message, modal, cb ){
-		htm_tool.showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'yes')\">是</button> <button onclick=\"htm_tool.hidePopup(this,'no')\">否</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+	var confirmYnc= function( message, modal, cb ){
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'yes')\">是</button> <button onclick=\"htm_tool.hidePopup(this,'no')\">否</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
 	}
-	htm_tool.prompt= function( message, defaultValue, modal, cb ){
-		htm_tool.showPopupHtml( "<div style='min-width:200px;'>"+message+"<br><input type='text' style='width:100%;'></input></div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,this.parentNode.parentNode.querySelector('input').value);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+	var prompt= function( message, defaultValue, modal, cb ){
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<br><input type='text' style='width:100%;'></input></div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,this.parentNode.parentNode.querySelector('input').value);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
 		if(defaultValue) popupStack[popupStack.length-1][0].querySelector('input').value= defaultValue;
 	}
+	var selectRadioList= function( message, itemList, defaultValue, modal, cb ){
+		var nm= "ht-select-radio="+(++seed);
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' value='' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((v[0]===defaultValue)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='radio' name='"+nm+"' value='"+v[0]+"'"+((v[0]===defaultValue)?" checked":"")+" onchange=\"if(!this.checked)return; var oldv= this.parentNode.parentNode.getAttribute('value'); var oldel=htm_tool.querySelectorByAttr(this.parentNode.parentNode,'input','value',oldv); htm_tool.setSelected(this.parentNode,oldel && oldel.parentNode,true);this.parentNode.parentNode.setAttribute('value',this.value)\"></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,this.parentNode.parentNode.querySelector('input:checked').value);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		if(defaultValue) popupStack[popupStack.length-1][0].querySelector('div.ht-input').setAttribute("value", defaultValue);
+	}
+	var selectCheckboxList= function( message, itemList, defaultValueList, modal, cb ){
+		if( ! defaultValueList || typeof defaultValueList=="string" ) defaultValueList=[defaultValueList];
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((defaultValueList.indexOf(v[0])>=0)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='checkbox' value='"+v[0]+"'"+((defaultValueList.indexOf(v[0])>=0)?" checked":"")+" onchange='htm_tool.setSelected(this.parentNode,null,this.checked)'></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"var items=this.parentNode.parentNode.querySelectorAll('input:checked');var a=[];for(i=0;i<items.length;i++){a[i]=items[i].value;};htm_tool.hidePopup(this,a);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+	}
 
-}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// export module
+	
+	var htm_tool= ele;
+	Object.assign( htm_tool,
+		{
+			ele: ele,
+			eleSibling: eleSibling,
+			dateString19: dateString19,
+			dateString14: dateString14,
+			dateDiffStr: dateDiffStr,
+			addCssText: addCssText,
+			appendBodyHtml: appendBodyHtml,
+			querySelectorByAttr: querySelectorByAttr,
+			eleId: eleId,
+			httpRequest: httpRequest,
+			httpRequestJson: httpRequestJson,
+			setSelected: setSelected,
+			selectTabItem: selectTabItem,
+			showLog: showLog,
+			startDrag: dragObject.onStart,
+			showPopup: showPopup,
+			hidePopup: hidePopup,
+			showPopupHtml: showPopupHtml,
+			alert: alert,
+			confirm: confirm,
+			confirmYnc: confirmYnc,
+			prompt: prompt,
+			selectRadioList: selectRadioList,
+			selectCheckboxList: selectCheckboxList,
+			
+		}
+	);
+	
+	//commonJS module
+	if ( typeof module === "object" && module && typeof module.exports === "object" ) { module.exports = htm_tool; }
 
-//commonJS module
-if ( typeof module === "object" && module && typeof module.exports === "object" ) { module.exports = htm_tool; }
+	//dom module
+	if( typeof window !== "undefined" && window ){
+		if( !window.htm_tool ) window.htm_tool= htm_tool;
+		
+		//set user-defined variable
+		var elScript= document.querySelector("script[ht-var-name]");
+		if( elScript ){ window[elScript.getAttribute("ht-var-name")]= htm_tool; }
+	}
 
-//dom module
-if( typeof window !== "undefined" && window ){
-	if( !window.htm_tool ) window.htm_tool= htm_tool;
-	if( document.querySelector("script[ht-var-name]") ){ window[document.querySelector("script[ht-var-name]").getAttribute("ht-var-name")]= htm_tool; }
-}
+}());
 
