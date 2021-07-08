@@ -699,7 +699,33 @@
 		if( ! defaultValueList || typeof defaultValueList=="string" ) defaultValueList=[defaultValueList];
 		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((defaultValueList.indexOf(v[0])>=0)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='checkbox' value='"+v[0]+"'"+((defaultValueList.indexOf(v[0])>=0)?" checked":"")+" onchange='htm_tool.setSelected(this.parentNode,null,this.checked)'></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"var items=this.parentNode.parentNode.querySelectorAll('input:checked');var a=[];for(i=0;i<items.length;i++){a[i]=items[i].value;};htm_tool.hidePopup(this,a);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// polyfill
+	
+	//Object.assign()
+	if( ! Object.assign ){
+		Object.assign= function( target, varArgs ){
+			if (target === null || target === undefined) {
+				throw new TypeError('Cannot convert undefined or null to object');
+			}
 
+			var to = Object(target);
+			for (var index = 1; index < arguments.length; index++) {
+				var nextSource = arguments[index];
+				if (nextSource !== null && nextSource !== undefined) {
+					for (var nextKey in nextSource) {
+						// Avoid bugs when hasOwnProperty is shadowed
+						if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+							to[nextKey] = nextSource[nextKey];
+						}
+					}
+				}
+			}
+			return to;
+		}
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// export module
 	
@@ -730,7 +756,6 @@
 			prompt: prompt,
 			selectRadioList: selectRadioList,
 			selectCheckboxList: selectCheckboxList,
-			
 		}
 	);
 	
