@@ -27,12 +27,14 @@
 </body>
 <script>
 	var itemSet={
-		"ele()": "ht.ele('divResult')==document.getElementById('divResult')",
+		"ele()": "ht.ele('divResult')===document.getElementById('divResult') && \n\tht.ele(document.getElementById('divResult'))===document.getElementById('divResult')",
+		"eleFromId()": "ht.eleFromId('divResult')===document.getElementById('divResult')",
+		"eleId()": "ht('divResult2').innerHTML='<span>child</span>';\nalert( 'new id= ' + ht.eleId(ht('divResult2').firstChild));\nht('divResult2').firstChild.id && \n\tht.eleId(document.getElementById('divResult2'))==='divResult2';",
 		"eleSibling()": "ht.eleSibling(ht('divResult2'),1)===ht('divResult3')",
 		"dateString19()": "ht.dateString19(new Date(2000,1,3,4,5,6))==='2000-02-03 04:05:06'",
 		"dateString14()": "ht.dateString14(new Date(2000,1,3,4,5,6))==='20000203040506'",
-		"dateDiffStr()": "ht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7))==='1天1时1分'",
-		"dateDiffStr()/2": "ht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7),1)==='1d 1h 1m'",
+		"dateDiffStr()": "ht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7))==='1天1时1分' &&" +
+							"\n\tht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7),1)==='1d 1h 1m'",
 		"addCssText()":	"ht.addCssText('#divResult3{height:200px}');\n"+
 						"ht('divResult3').offsetHeight===200;",
 		"httpRequest()":

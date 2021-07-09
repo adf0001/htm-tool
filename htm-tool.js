@@ -16,11 +16,26 @@
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// public tool
 	
-	var ele= function(id){ return document.getElementById(id);}
+	var ele= function(idOrEl){ return ( typeof idOrEl==="string")? document.getElementById(idOrEl) : idOrEl;}
+	var eleFromId= function(id){ return document.getElementById(id);}
+	
+	var seed=0;
+	
+	var eleId= function (el, prefix) {
+		if (el.id) return el.id;
+		if (!prefix) prefix = "ht-id-";
+
+		var sid;
+		while (document.getElementById(sid = prefix + (++seed))) { };	//speed
+
+		return el.id = sid;
+	}
+	
+	//----------------------------------------------------------------------------------------
 	
 	var eleSibling= function(el,offset){
 		var m= el.id.match( /^(\D+)(\d+)$/ );
-		return ele( m[1]+ (parseInt( m[2] )+ offset ));
+		return eleFromId( m[1]+ (parseInt( m[2] )+ offset ));
 	}
 
 	var dateString19= function (dt) {
@@ -66,18 +81,6 @@
 	
 	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
 		return el.querySelector( (head||"")+"["+attrName+"='"+ attrValue.replace(/(\<\>\'\"\:)/g,"\\$1")+"']"+(tail||""));
-	}
-	
-	var seed=0;
-	
-	var eleId= function (el, prefix) {
-		if (el.id) return el.id;
-		if (!prefix) prefix = "ht-id-";
-
-		var sid;
-		while (ele(sid = prefix + (++seed))) { };
-
-		return el.id = sid;
 	}
 	
 	/*
@@ -166,7 +169,7 @@
 			var i,imax= selectList.length,si;
 			for(i=0;i<imax;i++){
 				si= selectList[i];
-				if( typeof si==="string" ) si= ele(si);
+				si= ele(si);
 				if( !si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className+=" ht-selected";
 			}
 		}
@@ -177,7 +180,7 @@
 			var i,imax= unselectList.length,si;
 			for(i=0;i<imax;i++){
 				si= unselectList[i];
-				if( typeof si==="string" ) si= ele(si);
+				si= ele(si);
 				if( si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className= si.className.replace(/(^|\s)ht-selected(\s|$)/g,"$1$2");
 			}
 		}
@@ -249,17 +252,17 @@
 		var el;
 		//hide last
 		if( lastTabItem[0] ){
-			el= ele(lastTabItem[0]);
+			el= eleFromId(lastTabItem[0]);
 			el.className= el.className.replace(/ht\-tab\-item\-selected/g,"").replace(/\s+/g," " );
 		}
 		if( lastTabItem[1] ){
-			ele(lastTabItem[1]).style.display="none";
+			eleFromId(lastTabItem[1]).style.display="none";
 		}
 		
 		//show selected
-		el= ele(idTab);
+		el= eleFromId(idTab);
 		el.className= (el.className+" ht-tab-item-selected").replace(/\s+/g," " );
-		if( idPanel ) ele(idPanel).style.display="";
+		if( idPanel ) eleFromId(idPanel).style.display="";
 		
 		lastTabItem[0]= idTab;
 		lastTabItem[1]= idPanel;
@@ -279,7 +282,7 @@
 	var showLog= function( s ){
 		
 		//init
-		var elLog= ele("div-ht-log");
+		var elLog= eleFromId("div-ht-log");
 		if( ! elLog ){
 			appendBodyHtml(
 				"<div id='div-ht-log' style='position:fixed;right:0.5em;bottom:0.5em;width:auto;height:auto;max-width:500px;background:white;border:1px solid gray;font-size:9pt;padding:0.5em;cursor:default;' onclick='htm_tool.showLog();'>"+
@@ -289,14 +292,14 @@
 					"<div id='div-ht-log-content' style='display:none;'></div>"+
 				"</div>"
 			);
-			elLog= ele("div-ht-log");
+			elLog= eleFromId("div-ht-log");
 		}
 		
 		//----------------------------------------------------------------------------------------
 		
-		var el= ele('div-ht-log-content');
-		var elMinimize= ele('sp-ht-log-minimize');
-		var elClose= ele('sp-ht-log-close');
+		var el= eleFromId('div-ht-log-content');
+		var elMinimize= eleFromId('sp-ht-log-minimize');
+		var elClose= eleFromId('sp-ht-log-close');
 		
 		elLog.style.display="";
 		
@@ -555,7 +558,7 @@
 		
 		//----------------------------------------------------------------------------------------
 		
-		if( typeof el==="string" ) el= ele(el);
+		el= ele(el);
 		
 		//check closed
 		while( popupStack.length>0 ){
@@ -609,7 +612,7 @@
 	}
 	
 	var hidePopup= function( el, data ){
-		if( typeof el==="string" ) el= ele(el);
+		el= ele(el);
 		
 		//find .ht-popup
 		while( el && (! el.className || ! el.className.match(/ht-popup(\s|$)/) ) ) { el=el.parentNode; }
@@ -653,7 +656,7 @@
 		var i,nm,el;
 		for(i=1;i<=POPUP_HTML_COUNT_MAX;i++){
 			nm= "ht-popup-html-" + i;
-			el= ele(nm);
+			el= eleFromId(nm);
 			if( !el ) break;
 			if( el.style.display=="none" ) break;
 		}
@@ -664,14 +667,14 @@
 		}
 		
 		//init
-		if( ! ele(nm) ){
+		if( ! eleFromId(nm) ){
 			appendBodyHtml(
 				"<div id='"+nm+"' class='ht-popup' style='display:none;'>"+
 					"<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'></div>"+
 				"</div>"
 			);
 		}
-		var elBody= ele(nm).querySelector(".ht-popup-body");
+		var elBody= eleFromId(nm).querySelector(".ht-popup-body");
 		elBody.innerHTML= bodyHtml;
 		
 		showPopup( nm, (typeof modal==="undefined")?1:modal, cb );
@@ -732,7 +735,12 @@
 	var htm_tool= ele;
 	Object.assign( htm_tool,
 		{
+			//element and id
 			ele: ele,
+			eleFromId: eleFromId,
+			eleId: eleId,
+			
+			//tools
 			eleSibling: eleSibling,
 			dateString19: dateString19,
 			dateString14: dateString14,
@@ -740,10 +748,15 @@
 			addCssText: addCssText,
 			appendBodyHtml: appendBodyHtml,
 			querySelectorByAttr: querySelectorByAttr,
-			eleId: eleId,
+			
+			//xhr
 			httpRequest: httpRequest,
 			httpRequestJson: httpRequestJson,
+			
+			//css
 			setSelected: setSelected,
+			
+			//ui
 			selectTabItem: selectTabItem,
 			showLog: showLog,
 			startDrag: dragObject.onStart,
@@ -756,6 +769,7 @@
 			prompt: prompt,
 			selectRadioList: selectRadioList,
 			selectCheckboxList: selectCheckboxList,
+			
 		}
 	);
 	
