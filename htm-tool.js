@@ -85,7 +85,7 @@
 	
 	/*
 		cb
-			function(responseText, lastKey)
+			function( error:{ error, status, responseText, lastKey}, data:{responseText, lastKey} )
 		
 		methodOrOptions
 			method: "POST"/"GET"/...
@@ -105,8 +105,13 @@
 		}
 		
 		xq.onreadystatechange = function(){
-	        if (xq.readyState == 4 && xq.status==200) {
-				if( cb ) cb ( xq.responseText, lastKey );
+	        if (xq.readyState == 4){
+	        	if( xq.status==200) {
+					if( cb ) cb ( null, { responseText: xq.responseText, lastKey: lastKey} );
+				}
+				else {
+					if( cb ) cb ( { error: "status", status: xq.status, responseText: xq.responseText, lastKey: lastKey} );
+				}
 	        }
 	    }
 		
@@ -115,16 +120,19 @@
 
 	/*
 		cb
-			function( json, responseText, lastKey)
+			function( error:{ error, status, responseText, lastKey}, data:{json,responseText, lastKey} )
 	*/
 	var httpRequestJson= function( url, methodOrOptions, postData, cb, lastKey ){
-		httpRequest(url, methodOrOptions, postData, function(responseText, lastKey){
+		httpRequest(url, methodOrOptions, postData, function( error, data ){
+			if( error ){ if( cb ) cb(error,data); return; }
+			
 			try{
-				var json= JSON.parse(responseText);
-				cb(json,responseText, lastKey)
+				data.json= JSON.parse(data.responseText);
+				if(cb) cb(error,data);
 			}
 			catch(ex){
-				cb(null,responseText, lastKey)
+				data.json= null;
+				if(cb) cb(error,data);
 			}
 		}, lastKey);
 	}

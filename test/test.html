@@ -39,11 +39,11 @@
 						"ht('divResult3').offsetHeight===200;",
 		"httpRequest()":
 						"ht.httpRequest('http://myip.ipip.net','GET','',\n"+
-							"\tfunction(responseText){ht('divResult2').textContent=responseText; setOk('httpRequest()'); }\n"+
+							"\tfunction(error,data){ht('divResult2').textContent= error?JSON.stringify(error):data.responseText; setOk('httpRequest()'); }\n"+
 						");",
 		"httpRequestJson()":
 						"ht.httpRequestJson('http://myip.ipip.net/json','GET','',\n"+
-							"\tfunction(json, responseText){ht('divResult2').textContent=JSON.stringify(json); setOk('httpRequestJson()'); }\n"+
+							"\tfunction(error,data){ht('divResult2').textContent=JSON.stringify(error?error:data.json); setOk('httpRequestJson()'); }\n"+
 						");",
 		"css.ht-cmd":
 						"\"<span class='ht-cmd'>cmd .ht-cmd style sample</span>\"",
