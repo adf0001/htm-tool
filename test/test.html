@@ -37,6 +37,11 @@
 							"\n\tht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7),1)==='1d 1h 1m'",
 		"addCssText()":	"ht.addCssText('#divResult3{height:200px}');\n"+
 						"ht('divResult3').offsetHeight===200;",
+		"getSearchPart()":	"ht.getSearchPart('a','?aa=1&a=2') ==='2' && \n" +
+							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +
+							"ht.getSearchPart('a','?aa=1&a=2&cc=3') ==='2' && \n" +
+							"ht.getSearchPart('d','?aa=1&a=2&cc=3') ===null",
+		
 		"httpRequest()":
 						"ht.httpRequest('http://myip.ipip.net','GET','',\n"+
 							"\tfunction(error,data){ht('divResult2').textContent= error?JSON.stringify(error):data.responseText; setOk('httpRequest()'); }\n"+

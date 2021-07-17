@@ -83,6 +83,16 @@
 		return el.querySelector( (head||"")+"["+attrName+"='"+ attrValue.replace(/(\<\>\'\"\:)/g,"\\$1")+"']"+(tail||""));
 	}
 	
+	//getSearchPart= function( name [, searchString] )
+	var getSearchPart= function( name, searchString ){
+		if( !searchString ) searchString= window.location.search;
+		
+		if( typeof URLSearchParams ==="function" ) return (new URLSearchParams(searchString)).get(name);
+		
+		var mr= searchString.match( new RegExp( "(^|\\?|\\&)" + name + "\\=([^\\&]*)($|\\&)", ) );
+		return mr && mr[2];
+	}
+	
 	/*
 		cb
 			function( error:{ error, status, responseText, lastKey}, data:{responseText, lastKey} )
@@ -756,6 +766,7 @@
 			addCssText: addCssText,
 			appendBodyHtml: appendBodyHtml,
 			querySelectorByAttr: querySelectorByAttr,
+			getSearchPart: getSearchPart,
 			
 			//xhr
 			httpRequest: httpRequest,
