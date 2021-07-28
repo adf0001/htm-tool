@@ -789,6 +789,9 @@
 			selectRadioList: selectRadioList,
 			selectCheckboxList: selectCheckboxList,
 			
+			//extend name-space
+			ns: {},
+			
 		}
 	);
 	
