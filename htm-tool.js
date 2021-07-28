@@ -138,12 +138,12 @@
 			
 			try{
 				data.json= JSON.parse(data.responseText);
-				if(cb) cb(error,data);
 			}
 			catch(ex){
+				console.log(ex);
 				data.json= null;
-				if(cb) cb(error,data);
 			}
+			if(cb) cb(error,data);
 		}, lastKey);
 	}
 
