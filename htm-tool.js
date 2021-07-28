@@ -89,7 +89,7 @@
 		
 		if( typeof URLSearchParams ==="function" ) return (new URLSearchParams(searchString)).get(name);
 		
-		var mr= searchString.match( new RegExp( "(^|\\?|\\&)" + name + "\\=([^\\&]*)($|\\&)", ) );
+		var mr= searchString.match( new RegExp( "(^|\\?|\\&)" + name + "\\=([^\\&]*)($|\\&)" ) );
 		return mr && mr[2];
 	}
 	
