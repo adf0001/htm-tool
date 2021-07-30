@@ -26,6 +26,7 @@
 
 </body>
 <script>
+	
 	var itemSet={
 		"ele()": "ht.ele('divResult')===document.getElementById('divResult') && \n\tht.ele(document.getElementById('divResult'))===document.getElementById('divResult')",
 		"eleFromId()": "ht.eleFromId('divResult')===document.getElementById('divResult')",
@@ -41,6 +42,24 @@
 							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +
 							"ht.getSearchPart('a','?aa=1&a=2&cc=3') ==='2' && \n" +
 							"ht.getSearchPart('d','?aa=1&a=2&cc=3') ===null",
+		"deriveObject":
+						"var a= {\n"+
+							"\tf1: function(){return 1;},\n"+
+							"\tf2: function(){return 2;},\n"+
+						"};\n"+
+						"var b= {\n"+
+							"\tf3: function(){return 3;},\n"+
+							"\tf4: function(){return 4;},\n"+
+						"};\n"+
+						"var c= ht.deriveObject( a, b, {\n"+
+							"\tf2: function(){return 22;},\n"+
+							"\tf3: function(){return 33;},\n"+
+						"});\n"+
+						"\n"+
+						"c.f1()===1 && c.f2()===22 && c.f3()===33 && c.f4()===4 && \n" +
+						"\t('f1' in c) && !c.hasOwnProperty('f1') && c.hasOwnProperty('f4') && \n" +
+						"\ta.isPrototypeOf(c) && !b.isPrototypeOf(c)\n" 
+						,
 		
 		"httpRequest()":
 						"ht.httpRequest('http://myip.ipip.net','GET','',\n"+
@@ -74,7 +93,33 @@
 		"startDrag()":
 						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
 						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"htm_tool.startDrag( arguments[0], this )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this )\\\">drag 2</span> \\\n"+
-						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\"",
+						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\""
+						,
+		"dragObject/derive":
+						"myDragObject= ht.deriveObject( ht.dragObject, {\n"+
+							"\tel1:null,\n"+
+							"\tstart: function ( evt, el1){\n"+
+								"\t\tht.dragObject.start.apply( this, arguments );\n"+
+								"\t\tthis.el1=el1;\n"+
+								"\t\tthis.el1.style.background='lime';\n"+
+							"\t},\n"+
+							"\t\n"+
+							"\tonStop: function ( evt ) {\n"+
+								"\t\tht.dragObject.onStop.apply( this, arguments );\n"+
+								"\t\tthis.el1.style.background='';\n"+
+							"\t},\n"+
+							"\t\n"+
+							"\tonMove: function (evt) {\n"+
+								"\t\tht.dragObject.onMove.apply( this, arguments );\n"+
+								"\t\tthis.el1.textContent=this.el1.offsetLeft+','+this.el1.offsetTop;\n"+
+							"\t},\n"+
+						"});\n"+
+						"myDragObject.init();\n"+
+						"\n"+
+						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='myDragObject.start( arguments[0], this )' ontouchstart='myDragObject.start( arguments[0], this )'>drag 1</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"myDragObject.start( arguments[0], this )\\\" ontouchstart=\\\"myDragObject.start( arguments[0], this )\\\">drag 2</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"myDragObject.start( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"myDragObject.start( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\""
+						,
 		"showPopup()/hidePopup()":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<div id='divPopup1' class='ht-popup' style='display:none;'>\\\n" +
@@ -119,9 +164,9 @@
 						"<button id='btnOpenPopupS' onclick=\\\"htm_tool.showPopupHtml(popupHtmlStackHtml+'<br>'+(new Date()),htm_tool('chkModaless').checked)\\\">showPopupHtml-stack</button> \\\n"+
 
 						"<button id='btnOpenPopupSelect' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'bbb',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()</button> \\\n"+
-						"<button id='btnOpenPopupSelect-2' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()-2</button> \\\n"+
+						"<button id='btnOpenPopupSelect-2' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, exception raise and stop the process'>selectRadioList()-2/void</button> \\\n"+
 						"<button id='btnOpenPopupSelect2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()</button> \\\n"+
-						"<button id='btnOpenPopupSelect2-2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],null,htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-2</button> \\\n"+
+						"<button id='btnOpenPopupSelect2-2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],null,htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, return empty list'>selectCheckboxList()-2/void</button> \\\n"+
 						"<button id='btnOpenPopupSelect2-3' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb '],'ccc','ccc2','ccc3','ccc4','ccc5','ccc6','ccc7','ccc8','ccc9','ccc10','ccc11','ccc12','ccc13','ccc14'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-3</button> \\\n"+
 
 						"\";\n\n"+
@@ -162,7 +207,7 @@
 	}
 	
 	function onBodyLoad(){
-		ht('spCmdList').innerHTML=  Object.keys(itemSet).map( function(v){return "<span class='ht-cmd' name=\""+v+"\">" +v+"</span>\n";});
+		ht('spCmdList').innerHTML=  Object.keys(itemSet).map( function(v){return "\n<span class='ht-cmd' name=\""+v+"\">" +v+"</span>";});
 	}
 	
 	function setOk(name){

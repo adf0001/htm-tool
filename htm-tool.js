@@ -349,16 +349,22 @@
 			
 			<div onmousedown="htm_tool.startDrag( arguments[0], this )" ontouchstart="htm_tool.startDrag( arguments[0], this )">...</div>
 	*/
-
+	
 	var dragObject= {
 		
-		dragSet: {},	//map drag start-key to drag start item; drag item: {itemArray,pageX0,pageY0,from,elStart,key}
+		dragSet: null,	//map drag start-key to drag start item; drag item: {itemArray,pageX0,pageY0,from,elStart,key}
 		dragSetCount: 0,
 		
-		//onStart: function ( evt, el1, el2, ..., elN )
-		onStart: function ( evt, el1) {
-			if( this!== dragObject ) return dragObject.onStart.apply(dragObject, arguments);		//active `this`
+		init: function(){		//manually called constructor
+			this.dragSet= {};
+			this.dragSetCount= 0;
+			this._onMove= this._onStop= this._onKey= null;		//clear binding from prototype
 			
+			//this.startDrag= this.start.bind(this);		//binding function for start()		//not usually, cancelled.
+		},
+		
+		//start: function ( evt, el1, el2, ..., elN )
+		start: function ( evt, el1) {
 			if (arguments.length < 2) return false;
 			if( !evt ) evt= window.event;
 			
@@ -400,11 +406,11 @@
 
 			if( this.dragSetCount===1 ){
 				//global listener
-				document.addEventListener("mousemove", this.onMove, false);
-				document.addEventListener("mouseup", this.onStop, false);
-				document.addEventListener("keyup", this.onKey, false);
-				document.addEventListener('touchmove',this.onMove,{passive:false});
-				document.addEventListener('touchend',this.onStop,false);
+				document.addEventListener("mousemove", this._onMove || (this._onMove=this.onMove.bind(this)), false);
+				document.addEventListener("mouseup", this._onStop || (this._onStop=this.onStop.bind(this)), false);
+				document.addEventListener("keyup", this._onKey || (this._onKey=this.onKey.bind(this)), false);
+				document.addEventListener('touchmove',this._onMove,{passive:false});
+				document.addEventListener('touchend',this._onStop,false);
 			}
 		},
 		
@@ -430,8 +436,6 @@
 		},
 		
 		onStop: function ( evt ) {
-			if( this!== dragObject ) return dragObject.onStop(evt);		//active `this`
-			
 			//reset all
 			if( evt===false ){
 				for( var i in this.dragSet ){
@@ -466,12 +470,12 @@
 			
 			if( this.dragSetCount<1 ){
 				//remove global listener
-				console.log("release drag listener");
-				document.removeEventListener("mousemove", this.onMove, false);
-				document.removeEventListener("mouseup", this.onStop, false);
-				document.removeEventListener("keyup", this.onKey, false);
-				document.removeEventListener('touchmove',this.onMove,{passive:false});
-				document.removeEventListener('touchend',this.onStop,false);
+				//console.log("release drag listener");
+				document.removeEventListener("mousemove", this._onMove, false);
+				document.removeEventListener("mouseup", this._onStop, false);
+				document.removeEventListener("keyup", this._onKey, false);
+				document.removeEventListener('touchmove',this._onMove,{passive:false});
+				document.removeEventListener('touchend',this._onStop,false);
 			}
 			
 			if( this.dragSetCount<0 ){
@@ -482,8 +486,6 @@
 		},
 		
 		onMove: function (evt) {
-			if( this!== dragObject ) return dragObject.onMove(evt);		//active `this`
-			
 			var list= this.getEventList( evt );
 			if( !list ) return false;
 			
@@ -506,8 +508,6 @@
 		},
 		
 		onKey: function (evt) {
-			if( this!== dragObject ) return dragObject.onKey(evt);		//active `this`
-			
 			var keyCode= evt.keyCode||evt.which||evt.charCode;
 			
 			if (keyCode==27){ this.onStop( false ); }		//ESC to reset
@@ -515,6 +515,8 @@
 		},
 		
 	};
+	
+	dragObject.init();
 	
 	/*
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -747,6 +749,10 @@
 		}
 	}
 	
+	var deriveObject= function( proto, properties /*, properties2, ...*/ ){
+		return Object.assign.apply( Object, [Object.create( proto )].concat( Array.prototype.slice.call( arguments, 1 ) ) );
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// export module
 	
@@ -768,6 +774,8 @@
 			querySelectorByAttr: querySelectorByAttr,
 			getSearchPart: getSearchPart,
 			
+			deriveObject: deriveObject,
+			
 			//xhr
 			httpRequest: httpRequest,
 			httpRequestJson: httpRequestJson,
@@ -778,7 +786,8 @@
 			//ui
 			selectTabItem: selectTabItem,
 			showLog: showLog,
-			startDrag: dragObject.onStart,
+			//startDrag: dragObject.startDrag,
+			startDrag: dragObject.start.bind(dragObject),
 			showPopup: showPopup,
 			hidePopup: hidePopup,
 			showPopupHtml: showPopupHtml,
@@ -788,6 +797,9 @@
 			prompt: prompt,
 			selectRadioList: selectRadioList,
 			selectCheckboxList: selectCheckboxList,
+			
+			//object
+			dragObject: dragObject,
 			
 			//extend name-space
 			ns: {},
