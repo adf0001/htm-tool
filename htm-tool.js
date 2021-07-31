@@ -535,7 +535,7 @@
 	
 		example:
 			<div id='divPopup1' class='ht-popup' style='display:none;'>
-				<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this ) ontouchstart=='htm_tool.startDrag( arguments[0], this )'>
+				<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>
 					popup-1<hr>This is popup-1.
 				</div>
 			</div>
