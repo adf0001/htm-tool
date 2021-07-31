@@ -62,17 +62,28 @@
 			:
 			(days?(days + '天'):"") + (hours?(hours + '时'):"") + minutes + '分';
 	}
-
-	var addCssText= function (cssText) {
-		var style = document.createElement("style");
-		style.type = "text/css";
-		try {
-			style.appendChild(document.createTextNode(cssText));
+	
+	//if the element by `styleId` already exists, its cssText will be fully replaced.
+	var addCssText= function ( cssText, styleId ) {
+		var style;
+		if( styleId && ( style= ele(styleId) ) ){
+			if( style.tagName.toUpperCase() !="STYLE" ) return;	//fail
+			
+			style.textContent= cssText;
 		}
-		catch (ex) {
-			style.styleSheet.cssText = cssText;
+		else{
+			style= document.createElement("style");
+			style.type = "text/css";
+			if( styleId ) style.id= styleId;
+			
+			try {
+				style.appendChild(document.createTextNode(cssText));
+			}
+			catch (ex) {
+				style.styleSheet.cssText = cssText;
+			}
+			document.getElementsByTagName("head")[0].appendChild(style);
 		}
-		document.getElementsByTagName("head")[0].appendChild(style);
 	}
 	
 	var appendBodyHtml= function( htmlText ){

@@ -38,6 +38,9 @@
 							"\n\tht.dateDiffStr(new Date(2000,1,3,4,5,6),new Date(2000,1,4,5,6,7),1)==='1d 1h 1m'",
 		"addCssText()":	"ht.addCssText('#divResult3{height:200px}');\n"+
 						"ht('divResult3').offsetHeight===200;",
+		"addCssText()/styleId":	"ht.addCssText('#divResult3 span{background:yellow;}','myStyle1');\n"+
+						"ht('divResult3').innerHTML='<span>aaa</span> <span>bbb</span>';\n"+
+						"\"<span class='ht-cmd' onclick=\\\"ht('myStyle1').textContent='#divResult3 span{background:red;}'\\\">red</span> <span class='ht-cmd'  onclick=\\\"ht('myStyle1').textContent='#divResult3 span{background:blue;}'\\\">blue</span>\"",
 		"getSearchPart()":	"ht.getSearchPart('a','?aa=1&a=2') ==='2' && \n" +
 							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +
 							"ht.getSearchPart('a','?aa=1&a=2&cc=3') ==='2' && \n" +
