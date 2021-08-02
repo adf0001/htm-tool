@@ -91,7 +91,14 @@
 	}
 	
 	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
-		return el.querySelector( (head||"")+"["+attrName+"='"+ attrValue.replace(/(\<\>\'\"\:)/g,"\\$1")+"']"+(tail||""));
+		return ele(el).querySelector( (head||"")+"["+attrName+(( typeof attrValue!=="undefined" && attrValue!==null )?("='"+ (""+attrValue).replace(/(\<\>\'\"\:)/g,"\\$1")+"'"):"")+"]"+(tail||""));
+	}
+	var queryByName= function( el, name1 /* , name2, ...*/ ){
+		var i,imax=arguments.length, sa=[];
+		for(i=1;i<imax;i++){
+			sa[sa.length]= "[name='"+ arguments[i].replace(/(\<\>\'\"\:)/g,"\\$1")+"']";
+		}
+		return ele(el).querySelector( sa.join(" ") );
 	}
 	
 	//getSearchPart= function( name [, searchString] )
@@ -783,6 +790,7 @@
 			addCssText: addCssText,
 			appendBodyHtml: appendBodyHtml,
 			querySelectorByAttr: querySelectorByAttr,
+			queryByName: queryByName,
 			getSearchPart: getSearchPart,
 			
 			deriveObject: deriveObject,
