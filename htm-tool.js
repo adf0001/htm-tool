@@ -22,13 +22,13 @@
 	var seed=0;
 	
 	var eleId= function (el, prefix) {
-		if (el.id) return el.id;
+		if ( el && el.id) return el.id;
 		if (!prefix) prefix = "ht-id-";
 
 		var sid;
-		while (document.getElementById(sid = prefix + (++seed))) { };	//speed
+		while (document.getElementById(sid = prefix + (++seed))) { };
 
-		return el.id = sid;
+		return el?(el.id = sid): sid;
 	}
 	
 	//----------------------------------------------------------------------------------------
