@@ -86,9 +86,16 @@
 		}
 	}
 	
-	var appendBodyHtml= function( htmlText ){
-		document.body.insertAdjacentHTML( 'beforeend', htmlText );
+	//return the first inserted element
+	var appendHtml= function( parentNode, htmlText ){
+		parentNode= ele( parentNode);
+		var lastChild= parentNode.lastChild;
+		
+		parentNode.insertAdjacentHTML( 'beforeend', htmlText );
+		return lastChild?lastChild.nextSibling:parentNode.firstChild;
 	}
+	
+	var appendBodyHtml= function( htmlText ){ return appendHtml( document.body, htmlText ); }
 	
 	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
 		return ele(el).querySelector( (head||"")+"["+attrName+(( typeof attrValue!=="undefined" && attrValue!==null )?("='"+ (""+attrValue).replace(/(\<\>\'\"\:)/g,"\\$1")+"'"):"")+"]"+(tail||""));
@@ -788,6 +795,7 @@
 			dateString14: dateString14,
 			dateDiffStr: dateDiffStr,
 			addCssText: addCssText,
+			appendHtml: appendHtml,
 			appendBodyHtml: appendBodyHtml,
 			querySelectorByAttr: querySelectorByAttr,
 			queryByName: queryByName,
