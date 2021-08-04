@@ -66,17 +66,23 @@
 		return dateString19(dt).replace(/\D+/g, "");
 	}
 
-	var dateDiffStr= function ( startTime, endTime, english ){
-		var usedTime = endTime - startTime; // 相差的毫秒数
-		var days = Math.floor(usedTime / (24 * 3600 * 1000)); // 计算出天数
-		var leavel = usedTime % (24 * 3600 * 1000); // 计算天数后剩余的时间
-		var hours = Math.floor(leavel / (3600 * 1000)); // 计算剩余的小时数
-		var leavel2 = leavel % (3600 * 1000); // 计算剩余小时后剩余的毫秒数
-		var minutes = Math.floor(leavel2 / (60 * 1000)); // 计算剩余的分钟数
-		return english?
-			(days?(days + 'd '):"") + (hours?(hours + 'h '):"") + minutes + 'm'
+	var dateDiffStr= function ( startTime, endTime, abbr ){
+		var n= endTime - startTime;		//milliseconds
+		
+		var sign=(n<0)?"-":"";
+		if( sign ) n=-n;
+		
+		n= Math.round(n/1000/60);	//minutes
+		var minutes= n%60;
+		n= (n-minutes)/60;	//hours
+		var hours= n%24;
+		n= (n-hours)/24;	//days
+		var days= n;
+		
+		return abbr?
+			sign + (days?(days + 'd '):"") + (hours?(hours + 'h '):"") + minutes + 'm'
 			:
-			(days?(days + '天'):"") + (hours?(hours + '时'):"") + minutes + '分';
+			sign + (days?(days + '天'):"") + (hours?(hours + '时'):"") + minutes + '分';
 	}
 	
 	//if the element by `styleId` already exists, its cssText will be fully replaced.
