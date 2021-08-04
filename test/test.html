@@ -3,7 +3,7 @@
 <meta charset='utf-8'>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
 
-<script src='../htm-tool.js' ht-var-name='ht'></script>
+<script src='../htm-tool.js' htm-tool-var-name='ht'></script>
 
 </head>
 <body onload="onBodyLoad()">
@@ -104,8 +104,8 @@
 		"tab-control":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<div class='ht-tab-group'>\\\n"+
-							"\t<span class='ht-tab-item ht-tab-item-selected' id='spTab1' onclick=\\\"htm_tool.selectTabItem('top','spTab1','divTab1')\\\">Tab1</span>\\\n"+
-							"\t<span class='ht-tab-item' id='spTab2' onclick=\\\"htm_tool.selectTabItem('top','spTab2','divTab2')\\\">Tab2</span>\\\n"+
+							"\t<span class='ht-tab-item ht-tab-item-selected' id='spTab1' onclick=\\\"ht.selectTabItem('top','spTab1','divTab1')\\\">Tab1</span>\\\n"+
+							"\t<span class='ht-tab-item' id='spTab2' onclick=\\\"ht.selectTabItem('top','spTab2','divTab2')\\\">Tab2</span>\\\n"+
 						"</div>\\\n"+
 						"<div id='divTab1'><b>tab1 content</b></div>\\\n"+
 						"<div id='divTab2' style='display:none;'><i>tab2 content</i></div>\\\n"+
@@ -114,11 +114,11 @@
 						"'ui test'"
 						,
 		"showLog()":
-						"htm_tool.showLog('some log message');\n'log ui'",
+						"ht.showLog('some log message');\n'log ui'",
 		"startDrag()":
-						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
-						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"htm_tool.startDrag( arguments[0], this )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this )\\\">drag 2</span> \\\n"+
-						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"htm_tool.startDrag( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\""
+						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='ht.startDrag( arguments[0], this )' ontouchstart='ht.startDrag( arguments[0], this )'>drag 1</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"ht.startDrag( arguments[0], this )\\\" ontouchstart=\\\"ht.startDrag( arguments[0], this )\\\">drag 2</span> \\\n"+
+						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"ht.startDrag( arguments[0], this, ht('spDrag1'), ht('spDrag2') )\\\" ontouchstart=\\\"ht.startDrag( arguments[0], this, ht('spDrag1'), ht('spDrag2') )\\\">drag 3</span>\""
 						,
 		"dragObject/derive":
 						"myDragObject= ht.deriveObject( ht.dragObject, {\n"+
@@ -143,36 +143,36 @@
 						"\n"+
 						"\"<span style='position:relative;border:1px solid gray;' id='spDrag1' onmousedown='myDragObject.start( arguments[0], this )' ontouchstart='myDragObject.start( arguments[0], this )'>drag 1</span> \\\n"+
 						"<span style='position:relative;border:1px solid gray;' id='spDrag2' onmousedown=\\\"myDragObject.start( arguments[0], this )\\\" ontouchstart=\\\"myDragObject.start( arguments[0], this )\\\">drag 2</span> \\\n"+
-						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"myDragObject.start( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\" ontouchstart=\\\"myDragObject.start( arguments[0], this, htm_tool('spDrag1'), htm_tool('spDrag2') )\\\">drag 3</span>\""
+						"<span style='position:relative;border:1px solid gray;' id='spDrag3' onmousedown=\\\"myDragObject.start( arguments[0], this, ht('spDrag1'), ht('spDrag2') )\\\" ontouchstart=\\\"myDragObject.start( arguments[0], this, ht('spDrag1'), ht('spDrag2') )\\\">drag 3</span>\""
 						,
 		"showPopup()/hidePopup()":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<div id='divPopup1' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='ht.startDrag( arguments[0], this )' ontouchstart='ht.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-1<hr>This is popup-1.\\\n"+
 							"\t</div>\\\n"+
 						"</div>\\\n" +
 						"<div id='divPopup2' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='ht.startDrag( arguments[0], this )' ontouchstart='ht.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-2<hr>This is popup-2, modal. <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup2</span>, will fail <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup3',1)\\\">popup3</span>, maybe fail <br> \\\n"+
-								"\t\t<center><button onclick=\\\"htm_tool.hidePopup('divPopup2')\\\">close</button></center>\\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup2',1)\\\">popup2</span>, will fail <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup3',1)\\\">popup3</span>, maybe fail <br> \\\n"+
+								"\t\t<center><button onclick=\\\"ht.hidePopup('divPopup2')\\\">close</button></center>\\\n"+
 							"\t</div>\\\n"+
 						"</div>\\\n" +
 						"<div id='divPopup3' class='ht-popup' style='display:none;'>\\\n" +
-							"\t<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'>\\\n"+
+							"\t<div class='ht-popup-body' onmousedown='ht.startDrag( arguments[0], this )' ontouchstart='ht.startDrag( arguments[0], this )'>\\\n"+
 								"\t\tpopup-3<hr>This is popup-3, stack. <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup2')\\\">popup2</span>, modaless, maybe fail <br> \\\n"+
-									"\t\t\t<span class='ht-cmd' onclick=\\\"htm_tool.showPopup('divPopup3',1)\\\">popup3</span>, will fail <br> \\\n"+
-								"\t\t<center><button onclick=\\\"htm_tool.hidePopup('divPopup3','fromClose')\\\">close</button></center>\\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup1')\\\">popup1</span> <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup2')\\\">popup2</span>, modaless, maybe fail <br> \\\n"+
+									"\t\t\t<span class='ht-cmd' onclick=\\\"ht.showPopup('divPopup3',1)\\\">popup3</span>, will fail <br> \\\n"+
+								"\t\t<center><button onclick=\\\"ht.hidePopup('divPopup3','fromClose')\\\">close</button></center>\\\n"+
 							"\t</div>\\\n"+
 						"</div>\\\n" +
-						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopup('divPopup1')\\\">popup-1</button> \\\n"+
-						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.showPopup('divPopup2',1)\\\">popup-2, modal</button> \\\n"+
-						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.showPopup('divPopup3',1,function(err,data){if(err||data)alert('popup3 at btn returned: error='+err+', data='+data);})\\\">popup-3, stack</button> \\\n"+
+						"<button id='btnOpenPopup1' onclick=\\\"ht.showPopup('divPopup1')\\\">popup-1</button> \\\n"+
+						"<button id='btnOpenPopup2' onclick=\\\"ht.showPopup('divPopup2',1)\\\">popup-2, modal</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"ht.showPopup('divPopup3',1,function(err,data){if(err||data)alert('popup3 at btn returned: error='+err+', data='+data);})\\\">popup-3, stack</button> \\\n"+
 						"\"\n\n"+
 						"ht('btnOpenPopup1').click();\n"+
 						"'ui test'"
@@ -180,24 +180,24 @@
 		"showPopupHtml()":
 						"ht('divResult2').innerHTML=\n"+
 						"\"<label><input id='chkModaless' type='checkbox' checked></input>modal / default</label><br>\\\n"+
-						"<button id='btnOpenPopup1' onclick=\\\"htm_tool.showPopupHtml('title-1<hr>message-1',htm_tool('chkModaless').checked)\\\">showPopupHtml()</button> \\\n"+
-						"<button id='btnOpenPopup2' onclick=\\\"htm_tool.alert('message-2',htm_tool('chkModaless').checked )\\\">alert()</button> \\\n"+
-						"<button id='btnOpenPopup3' onclick=\\\"htm_tool.confirm('message-3',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirm()</button> \\\n"+
-						"<button id='btnOpenPopup4' onclick=\\\"htm_tool.confirmYnc('message-4',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirmYnc()</button> \\\n"+
-						"<button id='btnOpenPopup5' onclick=\\\"htm_tool.prompt('message-5','default-value',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">prompt()</button> \\\n"+
+						"<button id='btnOpenPopup1' onclick=\\\"ht.showPopupHtml('title-1<hr>message-1',ht('chkModaless').checked)\\\">showPopupHtml()</button> \\\n"+
+						"<button id='btnOpenPopup2' onclick=\\\"ht.alert('message-2',ht('chkModaless').checked )\\\">alert()</button> \\\n"+
+						"<button id='btnOpenPopup3' onclick=\\\"ht.confirm('message-3',ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirm()</button> \\\n"+
+						"<button id='btnOpenPopup4' onclick=\\\"ht.confirmYnc('message-4',ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">confirmYnc()</button> \\\n"+
+						"<button id='btnOpenPopup5' onclick=\\\"ht.prompt('message-5','default-value',ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">prompt()</button> \\\n"+
 						
-						"<button id='btnOpenPopupS' onclick=\\\"htm_tool.showPopupHtml(popupHtmlStackHtml+'<br>'+(new Date()),htm_tool('chkModaless').checked)\\\">showPopupHtml-stack</button> \\\n"+
+						"<button id='btnOpenPopupS' onclick=\\\"ht.showPopupHtml(popupHtmlStackHtml+'<br>'+(new Date()),ht('chkModaless').checked)\\\">showPopupHtml-stack</button> \\\n"+
 
-						"<button id='btnOpenPopupSelect' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'bbb',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()</button> \\\n"+
-						"<button id='btnOpenPopupSelect-2' onclick=\\\"htm_tool.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'',htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, exception raise and stop the process'>selectRadioList()-2/void</button> \\\n"+
-						"<button id='btnOpenPopupSelect2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()</button> \\\n"+
-						"<button id='btnOpenPopupSelect2-2' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],null,htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, return empty list'>selectCheckboxList()-2/void</button> \\\n"+
-						"<button id='btnOpenPopupSelect2-3' onclick=\\\"htm_tool.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb '],'ccc','ccc2','ccc3','ccc4','ccc5','ccc6','ccc7','ccc8','ccc9','ccc10','ccc11','ccc12','ccc13','ccc14'],['bbb','ccc'],htm_tool('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-3</button> \\\n"+
+						"<button id='btnOpenPopupSelect' onclick=\\\"ht.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'bbb',ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectRadioList()</button> \\\n"+
+						"<button id='btnOpenPopupSelect-2' onclick=\\\"ht.selectRadioList('select message 1',['aaa',['bbb','文本bbb'],'ccc'],'',ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, exception raise and stop the process'>selectRadioList()-2/void</button> \\\n"+
+						"<button id='btnOpenPopupSelect2' onclick=\\\"ht.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],['bbb','ccc'],ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()</button> \\\n"+
+						"<button id='btnOpenPopupSelect2-2' onclick=\\\"ht.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb'],'ccc'],null,ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\" title='if select void, return empty list'>selectCheckboxList()-2/void</button> \\\n"+
+						"<button id='btnOpenPopupSelect2-3' onclick=\\\"ht.selectCheckboxList('select message 2',['aaa',['bbb','文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb 文本bbb '],'ccc','ccc2','ccc3','ccc4','ccc5','ccc6','ccc7','ccc8','ccc9','ccc10','ccc11','ccc12','ccc13','ccc14'],['bbb','ccc'],ht('chkModaless').checked,function(err,data){if(err||data)alert('returned: error='+err+', data='+data);})\\\">selectCheckboxList()-3</button> \\\n"+
 
 						"\";\n\n"+
 						
 						"window.popupHtmlStackHtml= \"title-S<hr>message-S <span class='ht-cmd' onclick='openPopupHtmlStack()'>open another</span>\";\n\n"+
-						"window.openPopupHtmlStack= function(){htm_tool('btnOpenPopupS').click();};\n\n"+
+						"window.openPopupHtmlStack= function(){ht('btnOpenPopupS').click();};\n\n"+
 						"'ui test'"
 						,
 	};

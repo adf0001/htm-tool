@@ -4,14 +4,30 @@
 	
 	example:
 
-		<script src='./htm-tool.js' ht-var-name='ht'></script>
+		<script src='./htm-tool.js' htm-tool-var-name='htm_tool'></script>
 
-		htm_tool.alert('message 1');
-		ht.showLog('message 2');	//only if the 'ht-var-name' attribute is set to 'ht' in <script>
+		htm_tool.showLog('my message');	//only if the 'htm-tool-var-name' attribute is set to 'htm_tool' in <script>; default global variable is window['htm-tool@npm']
 */
 
-(function(){
-	if( typeof htm_tool !== "undefined" && htm_tool ) return;	//already exists
+;(function(){
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// global variable
+	
+	//default global var
+	var defaultVarName="htm-tool@npm";
+	if( typeof window !== "undefined" && window && window[defaultVarName] ) return;	//already exists
+	
+	var defaultVarRef="window['"+defaultVarName+"']";
+	
+	//user defined global var
+	var varName= defaultVarName;
+	
+	var elScript= document.querySelector("script[htm-tool-var-name]");
+	if( elScript ){
+		var s= elScript.getAttribute("htm-tool-var-name").replace(/(^\s+|\s+$)/g,"");
+		if(s && !s.match(/[\'\"\\\/]/) ) varName= s;
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// public tool
@@ -321,28 +337,29 @@
 	*/
 
 	var tmidLog= null;	//log timer id
-
+	var elidLog= null;	//element id
+	
 	var showLog= function( s ){
 		
 		//init
-		var elLog= eleFromId("div-ht-log");
+		var elLog= eleFromId(elidLog);
 		if( ! elLog ){
-			appendBodyHtml(
-				"<div id='div-ht-log' style='position:fixed;right:0.5em;bottom:0.5em;width:auto;height:auto;max-width:500px;background:white;border:1px solid gray;font-size:9pt;padding:0.5em;cursor:default;' onclick='htm_tool.showLog();'>"+
-					"<span id='sp-ht-log-close' class='ht-cmd' style='float:right;text-decoration:none;padding:0em 0.3em;' onclick='setTimeout( function(){ htm_tool.showLog(false);}, 0 );' title='关闭'>&times;</span>"+
-					"<span id='sp-ht-log-minimize' class='ht-cmd' style='display:none;float:right;text-decoration:none;padding:0em 0.3em;' onclick='setTimeout( function(){ htm_tool.showLog(null);}, 0 );' title='最小化'>&minus;</span>"+
+			elLog= appendBodyHtml(
+				"<div style='position:fixed;right:0.5em;bottom:0.5em;width:auto;height:auto;max-width:500px;background:white;border:1px solid gray;font-size:9pt;padding:0.5em;cursor:default;' onclick=\""+defaultVarRef+".showLog();\">"+
+					"<span name='close' class='ht-cmd' style='float:right;text-decoration:none;padding:0em 0.3em;' onclick=\"setTimeout( function(){ "+defaultVarRef+".showLog(false);}, 0 );\" title='关闭'>&times;</span>"+
+					"<span name='minimize' class='ht-cmd' style='display:none;float:right;text-decoration:none;padding:0em 0.3em;' onclick=\"setTimeout( function(){ "+defaultVarRef+".showLog(null);}, 0 );\" title='最小化'>&minus;</span>"+
 					"<b>日志</b>"+
-					"<div id='div-ht-log-content' style='display:none;'></div>"+
+					"<div name='content' style='display:none;'></div>"+
 				"</div>"
 			);
-			elLog= eleFromId("div-ht-log");
+			elidLog= eleId(elLog);
 		}
 		
 		//----------------------------------------------------------------------------------------
 		
-		var el= eleFromId('div-ht-log-content');
-		var elMinimize= eleFromId('sp-ht-log-minimize');
-		var elClose= eleFromId('sp-ht-log-close');
+		var el= queryByName(elLog,'content');
+		var elMinimize= queryByName(elLog,'minimize');
+		var elClose= queryByName(elLog,'close');
 		
 		elLog.style.display="";
 		
@@ -629,13 +646,13 @@
 		
 		//add back
 		if( ! el.querySelector(".ht-popup-back") ){
-			el.insertAdjacentHTML( 'afterbegin', "<div class='ht-popup-back' onclick=\"if(this.parentNode.querySelector('.ht-popup-body').className.indexOf('ht-popup-modal')<0)htm_tool.hidePopup(this);\"></div>" );
+			el.insertAdjacentHTML( 'afterbegin', "<div class='ht-popup-back' onclick=\"if(this.parentNode.querySelector('.ht-popup-body').className.indexOf('ht-popup-modal')<0)"+defaultVarRef+".hidePopup(this);\"></div>" );
 		}
 		
 		//add close button
 		var elClose= elBody.querySelector("span[name='ht-popup-close']");
 		if( !elClose ){
-			elBody.insertAdjacentHTML( 'afterbegin', "<span name='ht-popup-close' style='float:right;text-decoration:none;padding:0em 0.3em;' class='ht-cmd' onclick='htm_tool.hidePopup(this);' title='关闭'>x</span>" );
+			elBody.insertAdjacentHTML( 'afterbegin', "<span name='ht-popup-close' style='float:right;text-decoration:none;padding:0em 0.3em;' class='ht-cmd' onclick=\""+defaultVarRef+".hidePopup(this);\" title='关闭'>x</span>" );
 			elClose= elBody.querySelector("span[name='ht-popup-close']");
 		}
 		
@@ -715,7 +732,7 @@
 		if( ! eleFromId(nm) ){
 			appendBodyHtml(
 				"<div id='"+nm+"' class='ht-popup' style='display:none;'>"+
-					"<div class='ht-popup-body' onmousedown='htm_tool.startDrag( arguments[0], this )' ontouchstart='htm_tool.startDrag( arguments[0], this )'></div>"+
+					"<div class='ht-popup-body' onmousedown=\""+defaultVarRef+".startDrag( arguments[0], this )\" ontouchstart=\""+defaultVarRef+".startDrag( arguments[0], this )\"></div>"+
 				"</div>"
 			);
 		}
@@ -726,26 +743,26 @@
 	}
 	
 	var alert= function( message, modal, cb ){
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick='htm_tool.hidePopup(this)'>确定</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\""+defaultVarRef+".hidePopup(this)\">确定</button></span>",modal, cb );
 	}
 	var confirm= function( message, modal, cb ){
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'ok')\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\""+defaultVarRef+".hidePopup(this,'ok')\">确定</button> <button onclick=\""+defaultVarRef+".hidePopup(this)\">取消</button></span>",modal, cb );
 	}
 	var confirmYnc= function( message, modal, cb ){
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,'yes')\">是</button> <button onclick=\"htm_tool.hidePopup(this,'no')\">否</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"</div><br><span style='float:right'><button onclick=\""+defaultVarRef+".hidePopup(this,'yes')\">是</button> <button onclick=\""+defaultVarRef+".hidePopup(this,'no')\">否</button> <button onclick=\""+defaultVarRef+".hidePopup(this)\">取消</button></span>",modal, cb );
 	}
 	var prompt= function( message, defaultValue, modal, cb ){
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"<br><input type='text' style='width:100%;'></input></div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,this.parentNode.parentNode.querySelector('input').value);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<br><input type='text' style='width:100%;'></input></div><br><span style='float:right'><button onclick=\""+defaultVarRef+".hidePopup(this,this.parentNode.parentNode.querySelector('input').value);\">确定</button> <button onclick=\""+defaultVarRef+".hidePopup(this)\">取消</button></span>",modal, cb );
 		if(defaultValue) popupStack[popupStack.length-1][0].querySelector('input').value= defaultValue;
 	}
 	var selectRadioList= function( message, itemList, defaultValue, modal, cb ){
 		var nm= "ht-select-radio="+(++seed);
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' value='' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((v[0]===defaultValue)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='radio' name='"+nm+"' value='"+v[0]+"'"+((v[0]===defaultValue)?" checked":"")+" onchange=\"if(!this.checked)return; var oldv= this.parentNode.parentNode.getAttribute('value'); var oldel=htm_tool.querySelectorByAttr(this.parentNode.parentNode,'input','value',oldv); htm_tool.setSelected(this.parentNode,oldel && oldel.parentNode,true);this.parentNode.parentNode.setAttribute('value',this.value)\"></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"htm_tool.hidePopup(this,this.parentNode.parentNode.querySelector('input:checked').value);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' value='' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((v[0]===defaultValue)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='radio' name='"+nm+"' value='"+v[0]+"'"+((v[0]===defaultValue)?" checked":"")+" onchange=\"if(!this.checked)return; var oldv= this.parentNode.parentNode.getAttribute('value'); var oldel="+defaultVarRef+".querySelectorByAttr(this.parentNode.parentNode,'input','value',oldv); "+defaultVarRef+".setSelected(this.parentNode,oldel && oldel.parentNode,true);this.parentNode.parentNode.setAttribute('value',this.value)\"></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\""+defaultVarRef+".hidePopup(this,this.parentNode.parentNode.querySelector('input:checked').value);\">确定</button> <button onclick=\""+defaultVarRef+".hidePopup(this)\">取消</button></span>",modal, cb );
 		if(defaultValue) popupStack[popupStack.length-1][0].querySelector('div.ht-input').setAttribute("value", defaultValue);
 	}
 	var selectCheckboxList= function( message, itemList, defaultValueList, modal, cb ){
 		if( ! defaultValueList || typeof defaultValueList=="string" ) defaultValueList=[defaultValueList];
-		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((defaultValueList.indexOf(v[0])>=0)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='checkbox' value='"+v[0]+"'"+((defaultValueList.indexOf(v[0])>=0)?" checked":"")+" onchange='htm_tool.setSelected(this.parentNode,null,this.checked)'></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"var items=this.parentNode.parentNode.querySelectorAll('input:checked');var a=[];for(i=0;i<items.length;i++){a[i]=items[i].value;};htm_tool.hidePopup(this,a);\">确定</button> <button onclick='htm_tool.hidePopup(this)'>取消</button></span>",modal, cb );
+		showPopupHtml( "<div style='min-width:200px;'>"+message+"<div class='ht-input' style='border:1px solid #ccc;padding:0.2em;max-height:10em;overflow:auto;max-width:500px;'>"+itemList.map(function(v){if(!(v instanceof Array))v=[v,v]; return "<label class='ht-hover"+((defaultValueList.indexOf(v[0])>=0)?" ht-selected":"")+"' style='width:100%;display:block;margin-bottom:1px;'><input type='checkbox' value='"+v[0]+"'"+((defaultValueList.indexOf(v[0])>=0)?" checked":"")+" onchange=\""+defaultVarRef+".setSelected(this.parentNode,null,this.checked)\"></input> "+v[1]+"</label>";}).join("")+"</div></div><br><span style='float:right'><button onclick=\"var items=this.parentNode.parentNode.querySelectorAll('input:checked');var a=[];for(i=0;i<items.length;i++){a[i]=items[i].value;};"+defaultVarRef+".hidePopup(this,a);\">确定</button> <button onclick=\""+defaultVarRef+".hidePopup(this)\">取消</button></span>",modal, cb );
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -784,6 +801,9 @@
 	var htm_tool= ele;
 	Object.assign( htm_tool,
 		{
+			//global var
+			varName: varName,
+			
 			//element and id
 			ele: ele,
 			eleFromId: eleFromId,
@@ -839,12 +859,9 @@
 
 	//dom module
 	if( typeof window !== "undefined" && window ){
-		if( !window.htm_tool ) window.htm_tool= htm_tool;
-		
-		//set user-defined variable
-		var elScript= document.querySelector("script[ht-var-name]");
-		if( elScript ){ window[elScript.getAttribute("ht-var-name")]= htm_tool; }
+		window[defaultVarName]= htm_tool;
+		if(varName!==defaultVarName) window[varName]= htm_tool;
 	}
 
-}());
+})();
 
