@@ -113,6 +113,13 @@
 	
 	var appendBodyHtml= function( htmlText ){ return appendHtml( document.body, htmlText ); }
 	
+	//return the first inserted element
+	var prependHtml= function( parentNode, htmlText ){
+		parentNode= ele( parentNode);
+		parentNode.insertAdjacentHTML( 'afterbegin', htmlText );
+		return parentNode.firstChild;
+	}
+	
 	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
 		return ele(el).querySelector( (head||"")+"["+attrName+(( typeof attrValue!=="undefined" && attrValue!==null )?("='"+ (""+attrValue).replace(/(\<\>\'\"\:)/g,"\\$1")+"'"):"")+"]"+(tail||""));
 	}
@@ -646,14 +653,13 @@
 		
 		//add back
 		if( ! el.querySelector(".ht-popup-back") ){
-			el.insertAdjacentHTML( 'afterbegin', "<div class='ht-popup-back' onclick=\"if(this.parentNode.querySelector('.ht-popup-body').className.indexOf('ht-popup-modal')<0)"+defaultVarRef+".hidePopup(this);\"></div>" );
+			prependHtml( el, "<div class='ht-popup-back' onclick=\"if(this.parentNode.querySelector('.ht-popup-body').className.indexOf('ht-popup-modal')<0)"+defaultVarRef+".hidePopup(this);\"></div>" );
 		}
 		
 		//add close button
 		var elClose= elBody.querySelector("span[name='ht-popup-close']");
 		if( !elClose ){
-			elBody.insertAdjacentHTML( 'afterbegin', "<span name='ht-popup-close' style='float:right;text-decoration:none;padding:0em 0.3em;' class='ht-cmd' onclick=\""+defaultVarRef+".hidePopup(this);\" title='关闭'>x</span>" );
-			elClose= elBody.querySelector("span[name='ht-popup-close']");
+			elClose= prependHtml( elBody, "<span name='ht-popup-close' style='float:right;text-decoration:none;padding:0em 0.3em;' class='ht-cmd' onclick=\""+defaultVarRef+".hidePopup(this);\" title='关闭'>x</span>" );
 		}
 		
 		//modal setting
@@ -811,12 +817,17 @@
 			
 			//tools
 			eleSibling: eleSibling,
+			
 			dateString19: dateString19,
 			dateString14: dateString14,
 			dateDiffStr: dateDiffStr,
+			
 			addCssText: addCssText,
+			
 			appendHtml: appendHtml,
 			appendBodyHtml: appendBodyHtml,
+			prependHtml: prependHtml,
+			
 			querySelectorByAttr: querySelectorByAttr,
 			queryByName: queryByName,
 			getSearchPart: getSearchPart,
