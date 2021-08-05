@@ -60,11 +60,36 @@
 						"ht.querySelectorByAttr('divResult3','b','myattr','22',':nth-of-type(2)').textContent==='ddd'  \n" 
 						,
 		"queryByName()":
-						"ht('divResult3').innerHTML='<span name=a>aaa</span> <span name=b>bbb <b name=c>ccc</b> <b name=a>aaa2</b></span>';\n"+
+						"ht('divResult3').innerHTML='\\\n"+
+							"\t<span name=a>aaa</span> \\\n"+
+							"\t<span name=b>bbb \\\n"+
+								"\t\t<span name=c>ccc</span> \\\n"+
+								"\t\t<span name=a>aaa2</span> \\\n"+
+								"\t\t<span name=d>ddd \\\n"+
+									"\t\t\t<span>no-name \\\n"+
+										"\t\t\t\t<span name=e>eee</span> \\\n"+
+									"\t\t\t</span>\\\n"+
+								"\t\t</span>\\\n"+
+							"\t</span>\\\n"+
+							"\t<span>no-name \\\n"+
+								"\t\t<span name=c>ccc2</span> \\\n"+
+							"\t</span>\\\n"+
+						"\t';\n"+
+						"\n"+
 						"ht.queryByName('divResult3','a').textContent==='aaa' && \n" +
 						"ht.queryByName('divResult3','c').textContent==='ccc' && \n" +
-						"ht.queryByName('divResult3','b','c').textContent==='ccc' && \n" +
-						"ht.queryByName('divResult3','b','a').textContent==='aaa2' \n" 
+						"ht.queryByName('divResult3','c',true).textContent==='ccc2' && \n" +
+						"ht.queryByName('divResult3','b.c').textContent==='ccc' && \n" +
+						"ht.queryByName('divResult3',['b','c']).textContent==='ccc' && \n" +
+						"ht.queryByName('divResult3',['b','a']).textContent==='aaa2' && \n" +
+						"\n"+
+						"ht.queryByName('divResult3','e').textContent==='eee' && \n" +
+						"ht.queryByName('divResult3','d.e').textContent==='eee' && \n" +
+						"ht.queryByName('divResult3','b.e').textContent==='eee' && \n" +
+						"ht.queryByName('divResult3','e',true)===null && \n" +
+						"ht.queryByName('divResult3','d.e',true)===null && \n" +
+						"ht.queryByName('divResult3','b.e',true)===null && \n" +
+						"ht.queryByName('divResult3','b.d.e',true).textContent==='eee' \n" 
 						,
 		"getSearchPart()":	"ht.getSearchPart('a','?aa=1&a=2') ==='2' && \n" +
 							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +

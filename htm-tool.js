@@ -129,12 +129,40 @@
 	var querySelectorByAttr= function( el, head, attrName, attrValue, tail ){
 		return ele(el).querySelector( (head||"")+"["+attrName+(( typeof attrValue!=="undefined" && attrValue!==null )?("='"+ (""+attrValue).replace(/(\<\>\'\"\:)/g,"\\$1")+"'"):"")+"]"+(tail||""));
 	}
-	var queryByName= function( el, name1 /* , name2, ...*/ ){
-		var i,imax=arguments.length, sa=[];
-		for(i=1;i<imax;i++){
-			sa[sa.length]= "[name='"+ arguments[i].replace(/(\<\>\'\"\:)/g,"\\$1")+"']";
+	
+	var queryByName= function( el, namePath, strict ){
+		if( typeof namePath==="string" ) namePath= namePath.split( "." );
+		
+		var i, imax= namePath.length, sa=[];
+		for(i=0;i<imax;i++){
+			sa[sa.length]= "[name='"+ namePath[i].replace(/(\<\>\'\"\:)/g,"\\$1")+"']";
 		}
-		return ele(el).querySelector( sa.join(" ") );
+		
+		el= ele(el);
+		if( ! strict ) return el.querySelector( sa.join(" ") );
+		
+		// strict mode: shouldn't have other name between the name path items
+		
+		var elList= el.querySelectorAll( sa.join(" ") );
+		var j,jmax= elList.length, eli;
+		for(j=0;j<jmax;j++){
+			//check name path
+			eli= elList[j].parentNode;
+			for(i=imax-2;i>=0;i--){
+				while( !eli.hasAttribute("name") ){ eli= eli.parentNode; }
+				if( eli.getAttribute("name")!= namePath[i] ) break;	//not match
+				eli= eli.parentNode;
+			}
+			if(i>=0) continue;	//not match, check next
+			
+			//check to root
+			while( 1 ){
+				if( eli===el ) return elList[j];	//matched and return
+				if( eli.hasAttribute("name") ) break;	//not match
+				eli= eli.parentNode;
+			}
+		}
+		return null;
 	}
 	
 	//getSearchPart= function( name [, searchString] )
