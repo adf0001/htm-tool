@@ -132,8 +132,31 @@
 		return ele(el).querySelector( (head||"")+"["+attrName+(( typeof attrValue!=="undefined" && attrValue!==null )?("='"+ (""+attrValue).replace(/(\<\>\'\"\:)/g,"\\$1")+"'"):"")+"]"+(tail||""));
 	}
 	
+	/*
+		namePath:
+			array
+				name string array;
+			string
+				name string list separated only by "." ( in priority );
+				or name string list separated only by whitespace.
+		strict:
+			false
+				it may have other names from `el` to the end of the name path;
+			true
+				it shouldn't have any other name from `el` to the end of the name path;
+			undefined
+				if `namePath` contain '.' set strict to true, otherwise set to false.
+	*/
 	var queryByName= function( el, namePath, strict ){
-		if( typeof namePath==="string" ) namePath= namePath.split( "." );
+		if( typeof namePath==="string" ){
+			if( namePath.indexOf(".")>=0 ){
+				if( typeof strict==="undefined" ) strict= true;
+				namePath= namePath.replace(/^\./,"").split( "." );
+			}
+			else{
+				namePath= namePath.split( /\s+/ );
+			}
+		}
 		
 		var i, imax= namePath.length, sa=[];
 		for(i=0;i<imax;i++){
@@ -143,7 +166,7 @@
 		el= ele(el);
 		if( ! strict ) return el.querySelector( sa.join(" ") );
 		
-		// strict mode: shouldn't have other name between the name path items
+		// strict mode
 		
 		var elList= el.querySelectorAll( sa.join(" ") );
 		var j,jmax= elList.length, eli;

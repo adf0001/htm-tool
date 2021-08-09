@@ -78,18 +78,19 @@
 						"\n"+
 						"ht.queryByName('divResult3','a').textContent==='aaa' && \n" +
 						"ht.queryByName('divResult3','c').textContent==='ccc' && \n" +
-						"ht.queryByName('divResult3','c',true).textContent==='ccc2' && \n" +
-						"ht.queryByName('divResult3','b.c').textContent==='ccc' && \n" +
+						"ht.queryByName('divResult3','c',true).textContent==='ccc2' && 	//strict mode\n" +
+						"ht.queryByName('divResult3','.c').textContent==='ccc2' && 	//strict mode\n" +
+						"ht.queryByName('divResult3','b.c').textContent==='ccc' && 	//strict mode\n" +
 						"ht.queryByName('divResult3',['b','c']).textContent==='ccc' && \n" +
 						"ht.queryByName('divResult3',['b','a']).textContent==='aaa2' && \n" +
 						"\n"+
 						"ht.queryByName('divResult3','e').textContent==='eee' && \n" +
-						"ht.queryByName('divResult3','d.e').textContent==='eee' && \n" +
-						"ht.queryByName('divResult3','b.e').textContent==='eee' && \n" +
-						"ht.queryByName('divResult3','e',true)===null && \n" +
-						"ht.queryByName('divResult3','d.e',true)===null && \n" +
-						"ht.queryByName('divResult3','b.e',true)===null && \n" +
-						"ht.queryByName('divResult3','b.d.e',true).textContent==='eee' \n" 
+						"ht.queryByName('divResult3','d.e',false).textContent==='eee' && \n" +
+						"ht.queryByName('divResult3','b.e',false).textContent==='eee' && \n" +
+						"ht.queryByName('divResult3','e',true)===null && 	//strict mode\n" +
+						"ht.queryByName('divResult3','d.e')===null && 	//strict mode\n" +
+						"ht.queryByName('divResult3','b.e')===null && 	//strict mode\n" +
+						"ht.queryByName('divResult3','b.d.e').textContent==='eee' 	//strict mode\n" 
 						,
 		"getSearchPart()":	"ht.getSearchPart('a','?aa=1&a=2') ==='2' && \n" +
 							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +
