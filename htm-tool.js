@@ -145,7 +145,7 @@
 			true
 				it shouldn't have any other name from `el` to the end of the name path;
 			undefined
-				if `namePath` contain '.' set strict to true, otherwise set to false.
+				if `namePath` contain '.' then set strict to true, otherwise set to false.
 	*/
 	var queryByName= function( el, namePath, strict ){
 		if( typeof namePath==="string" ){
@@ -199,6 +199,9 @@
 		var mr= searchString.match( new RegExp( "(^|\\?|\\&)" + name + "\\=([^\\&]*)($|\\&)" ) );
 		return mr && mr[2];
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// xhr
 	
 	/*
 		cb

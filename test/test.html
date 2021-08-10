@@ -43,7 +43,8 @@
 						"ht('divResult3').offsetHeight===200;",
 		"addCssText()/styleId":	"ht.addCssText('#divResult3 span.si{background:yellow;}','myStyle1');\n"+
 						"ht('divResult3').innerHTML='<span class=si>aaa</span> <span class=si>bbb</span>';\n"+
-						"\"<span class='ht-cmd' onclick=\\\"ht('myStyle1').textContent='#divResult3 span.si{background:red;}'\\\">red</span> <span class='ht-cmd'  onclick=\\\"ht('myStyle1').textContent='#divResult3 span.si{background:blue;}'\\\">blue</span>\"",
+						"\"<span class='ht-cmd' onclick=\\\"ht('myStyle1').textContent='#divResult3 span.si{background:red;}'\\\">red</span> \"+\n"+
+						"\"<span class='ht-cmd'  onclick=\\\"ht.addCssText('#divResult3 span.si{background:blue;}','myStyle1')\\\">blue</span>\"",
 		"appendHtml()":
 						"var a=ht.appendHtml('divResult3','<span>aa</span> <span>bb</span> ');\n"+
 						"a.textContent=='aa' \n"
