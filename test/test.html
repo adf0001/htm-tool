@@ -15,7 +15,7 @@
 		name<br>
 		<input id='inpName' type='text' readonly style='background:#eee;'></input><br>
 		code<br>
-		<textarea id='txtCode' wrap='off' style="width:95%;height:10em;"></textarea><br>
+		<textarea id='txtCode' wrap='off' style="width:95%;height:10em;tab-size:4;"></textarea><br>
 		<button onclick="runItem()" id='btnRun'>run</button>
 		<hr>
 		<div id='divResult'></div>
@@ -97,6 +97,50 @@
 							"ht.getSearchPart('aa','?aa=1&a=2') ==='1' && \n" +
 							"ht.getSearchPart('a','?aa=1&a=2&cc=3') ==='2' && \n" +
 							"ht.getSearchPart('d','?aa=1&a=2&cc=3') ===null",
+		
+		//------------------------------------------------------------------------------------------------------------
+		
+		"bindByName()":
+						"ht('divResult3').innerHTML='\\\n"+
+						"	<span name=sp-on class=ht-cmd onclick=\"alert(\\\'original click 1, on\\\')\">on</span>, \\\n"+
+						"	<span name=sp-event class=ht-cmd onclick=\"alert(\\\'original click 2, evt\\\')\">event</span>, <br>\\\n"+
+						
+						"	<span name=sp-attr class=ht-cmd id=sp-attr-id >attr</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.attr_title)\\'>get attr</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\'myObj.attr_title=new Date()\\'>set attr</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-attr-id\\\').getAttribute( \\\'title\\\'))\\\">getAttribute()</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-attr-id\\\').setAttribute( \\\'title\\\', \\\'attr-\\\'+(new Date()) )\\\">setAttribute()</span> <br>\\\n"+
+						
+						"	<span name=sp-attr2 class=ht-cmd id=sp-attr2-id >attr2</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.attr_title)\\'>get attr</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.attr_title=\\\'attr3-\\\'+(new Date())\\\">set attr</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-attr2-id\\\').getAttribute( \\\'title\\\'))\\\">getAttribute()</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-attr2-id\\\').setAttribute( \\\'title\\\', \\\'attr4-\\\'+(new Date()) )\\\" style=\\'margin-right:2em;\\'>setAttribute()</span> //bi-direction<br>\\\n"+
+							
+						"	';\n"+
+						"\n"+
+						"var myObj={\n"+
+						"	func1: function(){alert( 'func1' );},\n"+
+						"	attr_title: 'aaaaaa',\n"+
+						"};\n"+
+						"window.myObj=myObj;\n"+
+						"\n"+
+						"var myConfig=[\n"+
+						"	['sp-on'	,'on'		,'click'	,'func1'],\n"+
+						"	['sp-event'	,'event'	,'click'	,'func1'],\n"+
+						"	[			,			,			,function(){alert('inline func3')}],\n"+
+						"	['sp-attr'	,'attr'		,'title'	,'attr_title'],\n"+
+						"	['sp-attr2'	,'attr'		,'title'	,'attr_title', true ],		//bi-direction\n"+
+						"];\n"+
+						"\n"+
+						"var ret= ht.bindByName('divResult3',myObj,myConfig);\n" +
+						"if(ret instanceof Error) console.log(ret);\n" +
+						"!(ret instanceof Error);\n" +
+						""
+						,
+		
+		//------------------------------------------------------------------------------------------------------------
+		
 		"deriveObject":
 						"var a= {\n"+
 							"\tf1: function(){return 1;},\n"+

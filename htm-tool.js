@@ -200,6 +200,219 @@
 		return mr && mr[2];
 	}
 	
+	var formatError= function( text, relatedKey, json ){
+		if( typeof relatedKey !== "undefined" ) text+=", "+JSON.stringify(relatedKey);
+		if( typeof json !== "undefined" ) text+=", "+JSON.stringify(json);
+		return Error(text);
+	}
+	
+	//callback( mutationItem, observer )
+	var observeSingleMutation= function( target, options, callback ){
+		var mo= new MutationObserver( function(mutationList, observer){ return callback( mutationList[mutationList.length-1], observer ); } );
+		mo.observe(target, options);
+		return mo;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// bind by name
+	
+	/*
+		bindConfig:
+			binding config, a bind-item Array
+			[
+				[ "namePath", "type", typeOption | "typeItem", member, memberOption | biDirection ],		//bind-item-1
+				...		//bind-item-N
+			]
+			
+				"namePath"
+					name path string, ref. queryByName()
+				
+				"type"
+					dom type string
+					
+					typeOption
+						dom type option
+						
+						"typeItem"
+							dom type sub-item string
+				
+				member
+					js member
+						"propertyName" | "methodName" | function;
+				
+					memberOption
+						js member option
+						
+						biDirection
+							set true/1 to bind both from js to dom and from dom to js; otherwise bind in default way.
+				
+			type format:
+				
+				"on":
+					event binding by setting GlobalEventHandlers[ "on" + typeItem ],
+					
+						[ "namePath", "on", "click", "methodName" | function, extraArgument ]
+				
+				"event|evt":
+					event binding by addEventListener()
+					
+						[ "namePath", "event|evt", "click", "methodName" | function, extraArgument={listenerOptions} ]
+				
+				"attr":
+					attribute binding,
+					
+						[ "namePath", "attr", "title", "propertyName", biDirection || false ]
+						[ "namePath", "attr", "title", "methodName" | function, extraArgument ]
+				
+	*/
+	
+	//bind-item constant
+	var BI_NAME_PATH=0,
+		BI_TYPE=1,
+		BI_TYPE_ITEM=2,
+		BI_TYPE_OPTION=2,
+		BI_MEMBER=3,
+		BI_MEMBER_OPTION=4;
+	
+	//return Error if fail
+	var bindByName= function( el, obj, bindConfig ){
+		el=ele(el);
+		
+		var elLast=el,lastName="";
+		var i,imax= bindConfig.length, bci, ret, namePath;
+		
+		var nm={			//name mapping;
+			"": eleId(elLast)	//map "" to root element
+		};
+		
+		for( i=0;i<imax;i++ ){
+			bci= bindConfig[i];
+			namePath= bci[BI_NAME_PATH]||"";
+			if( typeof namePath !=="string" ) return formatError("bind name path is not a string", namePath, bci );
+			
+			if( ! namePath ){	//omitted "namePath"
+				bci[BI_NAME_PATH]= lastName;	//fill back omitted "namePath"
+				
+				if( i ){	//copy other omitted item from previous value
+					if( !bci[BI_TYPE] ) bci[BI_TYPE]= bindConfig[i-1][BI_TYPE];	//fill back omitted "type"
+					if( !bci[BI_TYPE_ITEM] ) bci[BI_TYPE_ITEM]= bindConfig[i-1][BI_TYPE_ITEM];	//fill back omitted "typeItem" | typeOption
+				}
+			}
+			else if( namePath!=lastName ){		//new namePath
+				elLast= queryByName( el, namePath );
+				if( !elLast ) return formatError("bind name path unfound", namePath, bci );
+				nm[namePath]=eleId(elLast);
+				lastName= namePath;
+				
+				if( bci.length===1 ) continue;	//only build name mapping
+			}
+			
+			ret= bindElement( elLast, obj, bci );
+			if( ret instanceof Error ) return ret;
+		}
+		return true;
+	}
+	
+	//return Error if fail
+	var bindElement= function( elItem, obj, bindItem ){
+		
+		//-------------------------------------
+		//arguments
+		
+		var elItemId= eleId(elItem);
+		
+		//type
+		var type= bindItem[BI_TYPE];
+		
+		//typeItem, typeOption
+		var typeOption= bindItem[BI_TYPE_OPTION], typeItem;
+		if( typeof typeOption==="string" ){ typeItem= typeOption; typeOption= null; }
+		else { typeItem= typeOption.typeItem; }
+		
+		if( !typeItem ) return formatError("bind typeItem empty", bindItem );
+		
+		//member
+		var member= bindItem[BI_MEMBER];
+		
+		var memberValue;
+		if( typeof member==="function" ){ memberValue= member; }
+		else if( member in obj ) { memberValue= obj[member]; }
+		else return formatError("member unfound", member, bindItem );
+		
+		var memberIsFunction= ( typeof memberValue==="function" );
+		var memberThis= (!memberIsFunction || (memberValue!==member) ) ? obj : null;
+		
+		var memberOption= bindItem[BI_MEMBER_OPTION], biDirection;
+		if( typeof memberOption==="boolean" || memberOption===1 ) { biDirection= memberOption; memberOption= null; }
+		else biDirection= !!( memberOption && memberOption.biDirection);
+		
+		//-------------------------------------
+		//bind event
+		if( type=="on" || type=="event" || type=="evt" ){
+			if( !memberIsFunction ) return formatError("bind member is not a function", member, bindItem );
+			
+			var bindFunc= function(evt){ return memberValue.apply( memberThis || this, [ evt, memberOption]); };
+			
+			if( type=="on" ){ elItem["on"+typeItem]= bindFunc; }
+			else{
+				if(type!=="event") bindItem[BI_TYPE]= "event";	//fill back normalized value
+				elItem.addEventListener( typeItem, bindFunc, memberOption && memberOption.listenerOptions );
+			}
+			
+			return true;
+		}
+		
+		//bind attribute
+		if( type==="attr" ){
+			
+			//function binding
+			if( memberIsFunction ){
+				observeSingleMutation(
+					elItem,
+					{ attributes:true, attributeFilter:[typeItem], attributeOldValue:true },
+					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+				);
+				return true;
+			}
+			
+			//variable member
+			var v0= memberValue || elItem.getAttribute(typeItem) || "";
+			
+			var oldDesc = Object.getOwnPropertyDescriptor(obj, member) || {};
+			var newDesc = { configurable: true, enumerable: true };
+			
+			//get
+			if (oldDesc.get) { newDesc.get = oldDesc.get; }
+			else { newDesc.get = function () { return ele(elItemId).getAttribute(typeItem); }; }
+
+			//set
+			var oldSet = oldDesc.set;
+			newDesc.set = function (v) {
+				if (oldSet) { oldSet.call(this, v); }
+				if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v);
+			}
+			
+			//add definition
+			if (member in obj) delete obj[member];
+			Object.defineProperty(obj, member, newDesc);
+			
+			if( biDirection ) {
+				observeSingleMutation(
+					elItem,
+					{ attributes:true, attributeFilter:[typeItem], attributeOldValue:true },
+					function( mutationItem, observer ){ obj[member]= mutationItem.target.getAttribute(mutationItem.attributeName)||""; }
+				);
+			}
+			
+			//init value
+			obj[member]= v0;
+			
+			return true;
+		}
+		
+		return formatError("unknown bind type",type,bindItem );
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// xhr
 	
@@ -894,7 +1107,13 @@
 			queryByName: queryByName,
 			getSearchPart: getSearchPart,
 			
+			bindElement: bindElement,
+			bindByName: bindByName,
+			
 			deriveObject: deriveObject,
+			
+			formatError: formatError,
+			observeSingleMutation: observeSingleMutation,
 			
 			//xhr
 			httpRequest: httpRequest,
