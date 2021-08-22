@@ -104,33 +104,72 @@
 						"ht('divResult3').innerHTML='\\\n"+
 						"	<span name=sp-on class=ht-cmd onclick=\"alert(\\\'original click 1, on\\\')\">on</span>, \\\n"+
 						"	<span name=sp-event class=ht-cmd onclick=\"alert(\\\'original click 2, evt\\\')\">event</span>, <br>\\\n"+
-						
+						"\\\n"+
 						"	<span name=sp-attr class=ht-cmd id=sp-attr-id >attr</span>, \\\n"+
 						"	<span class=ht-cmd onclick=\\'alert(myObj.attr_title)\\'>get attr</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\'myObj.attr_title=new Date()\\'>set attr</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-attr-id\\\').getAttribute( \\\'title\\\'))\\\">getAttribute()</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-attr-id\\\').setAttribute( \\\'title\\\', \\\'attr-\\\'+(new Date()) )\\\">setAttribute()</span> <br>\\\n"+
-						
+						"\\\n"+
 						"	<span name=sp-attr2 class=ht-cmd id=sp-attr2-id >attr2</span>, \\\n"+
 						"	<span class=ht-cmd onclick=\\'alert(myObj.attr_title)\\'>get attr</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"myObj.attr_title=\\\'attr3-\\\'+(new Date())\\\">set attr</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-attr2-id\\\').getAttribute( \\\'title\\\'))\\\">getAttribute()</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-attr2-id\\\').setAttribute( \\\'title\\\', \\\'attr4-\\\'+(new Date()) )\\\" style=\\'margin-right:2em;\\'>setAttribute()</span> //bi-direction<br>\\\n"+
+						"\\\n"+
+						"	<input name=inp1 value=111 id=inp1-id></input>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.inp_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.inp_v=\\\'v-\\\'+(new Date())\\\">set v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'inp1-id\\\').value)\\\">get prop</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'inp1-id\\\').value= \\\'v2-\\\'+(new Date());ht.dispatchEventByName(\\\'inp1-id\\\',\\'change\\')\\\" style=\\'color:gray;\\' title=\\'no effect\\'>set prop+dispatchEvent()</span> <br>\\\n"+
+						"\\\n"+
+						"	<input name=inp2 value=222 id=\\'inp2-id\\'></input>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.inp_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.inp_v=\\\'v3-\\\'+(new Date())\\\">set v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'inp2-id\\\').value)\\\">get prop</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'inp2-id\\\').value= \\\'v4-\\\'+(new Date());ht.dispatchEventByName(\\\'inp2-id\\\',\\'change\\')\\\" style=\\'color:gray;margin-right:2em;\\' title=\\'effective, but not recommend, and had better use [set v]\\'>set prop+dispatchEvent(change)</span>  //bi-direction<br>\\\n"+
+						"\\\n"+
+						"	<input name=inp3 value=333 id=\\'inp3-id\\'></input>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.inp_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.inp_v=\\\'v5-\\\'+(new Date())\\\">set v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'inp3-id\\\').value)\\\">get prop</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'inp3-id\\\').value= \\\'v6-\\\'+(new Date());ht.dispatchEventByName(\\\'inp3-id\\\',\\'input\\')\\\" style=\\'color:gray;margin-right:2em;\\' title=\\'effective, but not recommend, and had better use [set v]\\'>set prop+dispatchEvent(input)</span>  //\\'input\\' event<br>\\\n"+
+						"\\\n"+
+						"	<input name=inp4 value=444 id=\\'inp4-id\\'></input>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.inp_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.inp_v=\\\'v7-\\\'+(new Date())\\\">set v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'inp4-id\\\').value)\\\">get prop</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'inp4-id\\\').value= \\\'v8-\\\'+(new Date());\\\" style=\\'margin-right:2em;\\' title=\\'effective\\'>set prop</span>  //watchJs<br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-html id=sp-html-id >5555</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-html-id\\\').innerHTML=\\\'<b>hhhh</b> \\\'+(new Date())\\\" style=\\'margin-right:2em;\\'>set</span> //innerHTML<br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-text id=sp-text-id >666</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-text-id\\\').textContent=\\\'<b>ttt</b> \\\'+(new Date())\\\" style=\\'margin-right:2em;\\'>set</span>  //textContent<br>\\\n"+
 							
 						"	';\n"+
 						"\n"+
 						"var myObj={\n"+
 						"	func1: function(){alert( 'func1' );},\n"+
 						"	attr_title: 'aaaaaa',\n"+
+						"	inp_v: 'bbb',\n"+
 						"};\n"+
 						"window.myObj=myObj;\n"+
 						"\n"+
 						"var myConfig=[\n"+
 						"	['sp-on'	,'on'		,'click'	,'func1'],\n"+
 						"	['sp-event'	,'event'	,'click'	,'func1'],\n"+
-						"	[			,			,			,function(){alert('inline func3')}],\n"+
+						"	[			,			,			,function(){alert('inline func3')} ],\n"+
 						"	['sp-attr'	,'attr'		,'title'	,'attr_title'],\n"+
 						"	['sp-attr2'	,'attr'		,'title'	,'attr_title', true ],		//bi-direction\n"+
+						"	[			,			,			,function(){alert('inline func attr2')} ], \n"+
+						"	['inp1'	,'prop'		,'value'	,'inp_v' ], \n"+
+						"	['inp2'	,'prop'		,'value'	,'inp_v',	true /* { biDirection:true } */ ],		//bi-direction\n"+
+						"	['inp3'	,'prop'		,'value'	,'inp_v',	'input' /* { notifyEvent:'input' } */ ], 		//'input' event\n"+
+						"	['inp4'	,'prop'		,'value'	,'inp_v',	0x2 /* { watchJs:true } */ ], 		//watchJs\n"+
+						"\n"+
+						"	['sp-html'	,'prop'		,'innerHTML'	,'inp_v',	0x2 /* { watchJs:true } */ ], 		//watchJs\n"+
+						"	['sp-text'	,'prop'		,'textContent'	,'inp_v',	0x2 /* { watchJs:true } */ ], 		//watchJs\n"+
 						"];\n"+
 						"\n"+
 						"var ret= ht.bindByName('divResult3',myObj,myConfig);\n" +
