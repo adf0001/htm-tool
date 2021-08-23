@@ -146,13 +146,27 @@
 						"\\\n"+
 						"	<span name=sp-text id=sp-text-id >666</span>, \\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-text-id\\\').textContent=\\\'<b>ttt</b> \\\'+(new Date())\\\" style=\\'margin-right:2em;\\'>set</span>  //textContent<br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-display id=sp-display-id >777</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.dis_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.dis_v=\\\'none\\\'\\\">set v1=none</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.dis_v=\\\'\\\'\\\">set v1=</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-display-id\\\').style.display)\\\">get style</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display-id\\\').style.display= \\\'none\\\';\\\">set style=none</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display-id\\\').style.display= \\\'\\\';\\\">set style=</span> <br>\\\n"+
+						"\\\n"+
+						"	<label><input name=sp-display-chk id=\\'sp-display-chk-id\\' type=checkbox ></input> hide</label> \\\n"+
+						"	<label><input name=sp-display-chk2 id=\\'sp-display-chk2-id\\' type=checkbox ></input> show</label>\\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display-chk2-id\\\').checked=true\\\">set true</span>\\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display-chk2-id\\\').checked=false\\\">set false</span> <br>\\\n"+
 							
-						"	';\n"+
+						"<br><br><br>';\n"+
 						"\n"+
 						"var myObj={\n"+
 						"	func1: function(){alert( 'func1' );},\n"+
 						"	attr_title: 'aaaaaa',\n"+
 						"	inp_v: 'bbb',\n"+
+						"	dis_v: '',\n"+
 						"};\n"+
 						"window.myObj=myObj;\n"+
 						"\n"+
@@ -170,6 +184,10 @@
 						"\n"+
 						"	['sp-html'	,'prop'		,'innerHTML'	,'inp_v',	0x2 /* { watchJs:true } */ ], 		//watchJs\n"+
 						"	['sp-text'	,'prop'		,'textContent'	,'inp_v',	0x2 /* { watchJs:true } */ ], 		//watchJs\n"+
+						"\n"+
+						"	['sp-display'	,'style'		,'display'	,'dis_v',	true ],\n"+
+						"	['sp-display-chk'	,'prop'		,'checked'	,'dis_v',	{ biDirection:true, valueMapper:{true:'none',false:''}} ],\n"+
+						"	['sp-display-chk2'	,'prop'		,{typeItem:'checked',valueMapper:{'':true,'none':false}}	,'dis_v',	{ biDirection:true, watchJs:true, valueMapper:{true:'',false:'none'}} ],\n"+
 						"];\n"+
 						"\n"+
 						"var ret= ht.bindByName('divResult3',myObj,myConfig);\n" +

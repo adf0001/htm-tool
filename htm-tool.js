@@ -225,18 +225,38 @@
 		return getPropertyDescriptor( proto, prop, _depth+1 );	//searh in prototype list
 	}
 	
-	var enclosePropertyDescriptor= function( obj, prop, newSetter, newGetter, replaceGetter ){
+	var mapValue= function( v, valueMapper ){
+		if( ! valueMapper ) return v;
+		var newV= ( typeof valueMapper==="function" ) ? valueMapper(v) : valueMapper[v];
+		return (typeof newV==="undefined") ? v : newV;
+	}
+	
+	/*
+		encloseOption
+			.replaceGetter
+				set true to replace forcely the old getter;
+				shortcut argument is a boolean value;
+	*/
+	var enclosePropertyDescriptor= function( obj, prop, newSetter, newGetter, encloseOption ){
+		//arguments
+		var replaceGetter;
+		var typeofEo= typeof encloseOption;
+		
+		if( typeofEo==="boolean" ) { replaceGetter=encloseOption; encloseOption=null; }
+		else if( encloseOption ){ replaceGetter= encloseOption.replaceGetter; }
+		
+		//enclose
 		var oldDesc= getPropertyDescriptor(obj,prop) || {};
 		var newDesc = { configurable: true, enumerable: true };
 		
 		//setter
 		var oldSetter = oldDesc.set;
-		if( ! oldSetter ){ if( newSetter ) newDesc.set = newSetter; }
+		if( ! oldSetter ){ if( newSetter ){ newDesc.set = newSetter; } }
 		else if( !newSetter ) { newDesc.set = oldSetter; }
 		else{
 			newDesc.set = function (v) {
-				oldSetter.call(this, v);
-				newSetter( v );
+				oldSetter.call( this, v );
+				newSetter.call( this, v );
 			}
 		}
 		
@@ -280,12 +300,12 @@
 		bindConfig:
 			binding config, a bind-item Array
 			[
-				[ "namePath", "type", typeOption | "typeItem", member, memberOption | biDirection/0x1 | "notifyEvent" | watchJs/0x2 ],		//bind-item-1
+				[ "namePath", "type", typeOption | "typeItem", member, memberOption | .biDirection/0x1 | ".notifyEvent" | .watchJs/0x2 ],		//bind-item-1
 				...		//bind-item-N
 			]
 			
 				"namePath"
-					name path string, ref. queryByName()
+					name path string, refer to queryByName()
 				
 				"type"
 					dom type string
@@ -293,8 +313,12 @@
 					typeOption
 						dom type option
 						
-						"typeItem"
-							dom type sub-item string
+						".typeItem"
+							dom type sub-item string;
+							shortcut argument is a string;
+						
+						.valueMapper
+							a value mapper for setting dom item, refer to mapValue().
 				
 				member
 					js member
@@ -303,18 +327,22 @@
 					memberOption
 						js member option
 						
-						biDirection
+						.biDirection
 							set true to bind both from js to dom and from dom to js;
 							if not set, bind in default way;
-							shortcut value is true or 0x1;
+							shortcut argument is a boolean value, or a number value contain 0x1;
 							
-						notifyEvent
-							set name string of bi-direction notify event ( will automatically set biDirection=1 );
+						.notifyEvent
+							set name string of bi-direction notify event ( will automatically set biDirection=true );
 							if not set, use default event "change";
+							shortcut argument is a string;
 						
-						watchJs
-							if set true, for type "prop", watch dom property change from js ( will automatically set biDirection=1 ).
-							shortcut value is 0x2;
+						.watchJs
+							if set true, for type "prop", watch dom property change from js ( will automatically set biDirection=true ).
+							shortcut argument is a number value contain 0x2;
+						
+						.valueMapper
+							a value mapper for setting js member, refer to mapValue().
 						
 			type format:
 				
@@ -326,19 +354,25 @@
 				"event|evt":
 					event binding by addEventListener()
 					
-						[ "namePath", "event|evt", "click", "methodName" | function, extraArgument={listenerOptions} ]
+						[ "namePath", "event|evt", "click", "methodName" | function, extraArgument={ listenerOptions } ]
 				
 				"attr":
 					attribute binding,
 					
-						[ "namePath", "attr", "title", "propertyName", extraArgument={biDirection} ]
+						[ "namePath", "attr", "title", "propertyName", extraArgument={ biDirection } ]
 						[ "namePath", "attr", "title", "methodName" | function, extraArgument ]
 				
 				"prop":
 					property binding,
 					
 						[ "namePath", "prop", "value", "propertyName", extraArgument={ notifyEvent, biDirection, watchJs } ]
-						[ "namePath", "prop", "value", "methodName" | function, extraArgument={ notifyEvent, watchJs } ]
+						[ "namePath", "prop", "value", "methodName" | function, extraArgument={ notifyEvent, watchJs, listenerOptions } ]
+				
+				"style|css":
+					style binding
+					
+						[ "namePath", "style", "display", "propertyName", extraArgument={ biDirection } ]
+						[ "namePath", "style", "display", "methodName" | function, extraArgument ]
 				
 	*/
 	
@@ -402,9 +436,12 @@
 		var type= bindItem[BI_TYPE];
 		
 		//typeItem, typeOption
-		var typeOption= bindItem[BI_TYPE_OPTION], typeItem;
+		var typeOption= bindItem[BI_TYPE_OPTION], typeItem, domValueMapper;
 		if( typeof typeOption==="string" ){ typeItem= typeOption; typeOption= null; }
-		else { typeItem= typeOption.typeItem; }
+		else {
+			typeItem= typeOption.typeItem;
+			domValueMapper= typeOption.valueMapper;
+		}
 		
 		if( !typeItem ) return formatError("bind typeItem empty", bindItem );
 		
@@ -420,7 +457,7 @@
 		var memberThis= (!memberIsFunction || (memberValue!==member) ) ? obj : null;
 		
 		//memberOption
-		var memberOption= bindItem[BI_MEMBER_OPTION], biDirection, notifyEvent,watchJs;
+		var memberOption= bindItem[BI_MEMBER_OPTION], biDirection, notifyEvent,watchJs,jsValueMapper;
 		var typeofMo= typeof memberOption;
 		
 		if( typeofMo==="boolean" ) { biDirection= memberOption; memberOption= null; }
@@ -436,8 +473,9 @@
 			notifyEvent= memberOption.notifyEvent;
 			biDirection= notifyEvent || memberOption.biDirection;
 			watchJs= memberOption.watchJs;
+			jsValueMapper= memberOption.valueMapper;
 		}
-		if( notifyEvent || watchJs ) biDirection=true;
+		if( ! biDirection && (notifyEvent || watchJs) ) biDirection=true;
 		
 		//-------------------------------------
 		//bind event
@@ -464,16 +502,19 @@
 			}
 			
 			//variable member
-			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, elItem.getAttribute(typeItem), "");
+			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
-				function(v){ v=""+v; if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v); },
-				function(){ return ele(elItemId).getAttribute(typeItem); }
+				function(v){
+					v=""+mapValue( v, domValueMapper );
+					if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v);
+				},
+				function(){ return mapValue( ele(elItemId).getAttribute(typeItem), jsValueMapper ); }
 			);
 			
 			if( biDirection ) {
 				observeSingleMutation( elItem, { attributes:true, attributeFilter:[typeItem], attributeOldValue:true },
-					function( mutationItem, observer ){ obj[member]= mutationItem.target.getAttribute(mutationItem.attributeName)||""; }
+					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
 				);
 			}
 			
@@ -500,19 +541,56 @@
 			}
 			
 			//variable member
-			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, elItem[typeItem], "");
+			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue(elItem[typeItem]||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
-				function(v){ if( ele(elItemId)[typeItem] !=v ) ele(elItemId)[typeItem]= v; },
-				function() { return ele(elItemId)[typeItem]; }
+				function(v){
+					v= mapValue( v, domValueMapper );
+					if( ele(elItemId)[typeItem] !=v ) ele(elItemId)[typeItem]= v;
+				},
+				function() { return mapValue( ele(elItemId)[typeItem], jsValueMapper ); }
 			);
 			
 			if( biDirection ) {
-				elItem.addEventListener( notifyEvent || "change", function(evt){ obj[member]= ele(elItemId)[typeItem]; }, memberOption && memberOption.listenerOptions );
+				elItem.addEventListener( notifyEvent || "change", function(evt){ obj[member]= mapValue( ele(elItemId)[typeItem], jsValueMapper ); }, memberOption && memberOption.listenerOptions );
 			}
 			if( watchJs ) {
 				enclosePropertyDescriptor( elItem, typeItem,
 					function(v){ dispatchEventByName( elItemId, notifyEvent || "change", 0 ); }
+				);
+			}
+			
+			//init value
+			obj[member]= v0;
+			
+			return true;
+		}
+		
+		//bind style
+		if( type==="style" || type==="css" ){
+			
+			//function binding
+			if( memberIsFunction ){
+				observeSingleMutation( elItem, { attributes:true, attributeFilter:["style"], attributeOldValue:true },
+					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+				);
+				return true;
+			}
+			
+			//variable member
+			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
+			
+			enclosePropertyDescriptor( obj, member,
+				function(v){
+					v=""+mapValue( v, domValueMapper );
+					if( ele(elItemId).style[typeItem] !==v ) ele(elItemId).style[typeItem]= v;
+				},
+				function(){ return mapValue( ele(elItemId).style[typeItem], jsValueMapper ); }
+			);
+			
+			if( biDirection ) {
+				observeSingleMutation( elItem, { attributes:true, attributeFilter:["style"], attributeOldValue:true },
+					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
 				);
 			}
 			
@@ -1230,6 +1308,7 @@
 			enclosePropertyDescriptor: enclosePropertyDescriptor,
 			findWithFilter: findWithFilter,
 			dispatchEventByName: dispatchEventByName,
+			mapValue: mapValue,
 			
 			//xhr
 			httpRequest: httpRequest,
