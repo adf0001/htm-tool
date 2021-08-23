@@ -269,7 +269,11 @@
 		Object.defineProperty(obj, prop, newDesc);
 	}
 	
+	var defaultValueFilter= function(v){ return v || v===0 || v===""|| v===false; };
+	
 	var findWithFilter= function( filter, v /* , v2, ... */ ){
+		if( ! filter ) filter= defaultValueFilter;
+		
 		if( filter(v) ) return v;
 		
 		var i,imax=arguments.length;
@@ -502,7 +506,7 @@
 			}
 			
 			//variable member
-			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
+			var v0= findWithFilter( null, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
 				function(v){
@@ -541,7 +545,7 @@
 			}
 			
 			//variable member
-			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue(elItem[typeItem]||"", jsValueMapper ) );
+			var v0= findWithFilter( null, memberValue, mapValue(elItem[typeItem]||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
 				function(v){
@@ -578,7 +582,7 @@
 			}
 			
 			//variable member
-			var v0= findWithFilter( function(v){ return v || v===0 || v===""; }, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
+			var v0= findWithFilter( null, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
 				function(v){
@@ -1307,6 +1311,7 @@
 			getPropertyDescriptor: getPropertyDescriptor,
 			enclosePropertyDescriptor: enclosePropertyDescriptor,
 			findWithFilter: findWithFilter,
+			defaultValueFilter: defaultValueFilter,
 			dispatchEventByName: dispatchEventByName,
 			mapValue: mapValue,
 			
