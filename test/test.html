@@ -196,6 +196,7 @@
 						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-cls3-id\\\').className)\\\">get className</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls3-id\\\').className= \\\'ht-selected\\\';\\\">set className=ht-selected</span> \\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls3-id\\\').className= \\\'\\\';\\\" style=\\'margin-right:2em;\\'>set className=</span> //string<br>\\\n"+
+						"	<span name=sp-cls3-txt >bbb</span> <br>\\\n"+
 						
 							
 						"<br><br><br>';\n"+
@@ -238,6 +239,7 @@
 						"	['sp-cls'	,'class'		,'ht-selected'	,'cls_v',	true ],\n"+
 						"	['sp-cls2'	,'class'		,{typeItem:'ht-selected',valueMapper:{true:false,false:true}}	,'cls2_v',		{ biDirection:true, valueMapper:{true:false,false:true}} ],\n"+
 						"	['sp-cls3'	,'class'		,{typeItem:'ht-selected',valueMapper:function(v){console.log(v); return v.indexOf('aa')>0;}}	,'cls3_v',		{ biDirection:true, valueMapper:function(v){console.log('js',v); return 'state '+(v?'aa':'bb');}} ],\n"+
+						"	['sp-cls3-txt'	,'prop'		,'textContent'		,'cls3_v',  ],\n"+
 						"];\n"+
 						"\n"+
 						"var ret= ht.bindByName('divResult3',myObj,myConfig);\n" +

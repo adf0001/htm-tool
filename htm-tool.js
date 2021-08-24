@@ -213,13 +213,13 @@
 			if it's a string type, then it will be convert to an attribute observer.
 			
 		callback
-			callback( mutationItem, observer )
+			callback( mutationItem )
 			
 	*/
 	var observeSingleMutation= function( target, options, callback ){
 		if( typeof options==="string" ) options= { attributes:true, attributeFilter:[options], attributeOldValue:true };
 		
-		var mo= new MutationObserver( function(mutationList, observer){ return callback( mutationList[mutationList.length-1], observer ); } );
+		var mo= new MutationObserver( function(mutationList){ return callback( mutationList[mutationList.length-1] ); } );
 		mo.observe(target, options);
 		return mo;
 	}
@@ -517,7 +517,7 @@
 			//function binding
 			if( memberIsFunction ){
 				observeSingleMutation( elItem, typeItem,
-					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
 				);
 				return true;
 			}
@@ -535,7 +535,7 @@
 			
 			if( biDirection ) {
 				observeSingleMutation( elItem, typeItem,
-					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
+					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
 				);
 			}
 			
@@ -593,7 +593,7 @@
 			//function binding
 			if( memberIsFunction ){
 				observeSingleMutation( elItem, "style",
-					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
 				);
 				return true;
 			}
@@ -611,7 +611,7 @@
 			
 			if( biDirection ) {
 				observeSingleMutation( elItem, "style",
-					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
+					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
 				);
 			}
 			
@@ -627,7 +627,7 @@
 			//function binding
 			if( memberIsFunction ){
 				observeSingleMutation( elItem, "class",
-					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
 				);
 				return true;
 			}
@@ -646,7 +646,7 @@
 			
 			if( biDirection ) {
 				observeSingleMutation( elItem, "class",
-					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
+					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
 				);
 			}
 			
