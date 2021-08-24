@@ -172,6 +172,30 @@
 						"	<label><input name=sp-display2-chk2 id=\\'sp-display2-chk2-id\\' type=checkbox ></input> show</label>\\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display2-chk2-id\\\').checked=true\\\">set true</span>\\\n"+
 						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-display2-chk2-id\\\').checked=false\\\">set false</span><br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-cls id=sp-cls-id >999</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.cls_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls_v=true\\\">set v=true</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls_v=false\\\">set v=false</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-cls-id\\\').className)\\\">get className</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls-id\\\').className= \\\'ht-selected\\\';\\\">set className=ht-selected</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls-id\\\').className= \\\'\\\';\\\">set className=</span> <br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-cls2 id=sp-cls2-id >aaa</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.cls2_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls2_v=true\\\">set v=true</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls2_v=false\\\">set v=false</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-cls2-id\\\').className)\\\">get className</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls2-id\\\').className= \\\'ht-selected\\\';\\\">set className=ht-selected</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls2-id\\\').className= \\\'\\\';\\\" style=\\'margin-right:2em;\\'>set className=</span> //not<br>\\\n"+
+						"\\\n"+
+						"	<span name=sp-cls3 id=sp-cls3-id >bbb</span>, \\\n"+
+						"	<span class=ht-cmd onclick=\\'alert(myObj.cls3_v)\\'>get v</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls3_v=\\'state aa\\'\\\">set state=aa</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"myObj.cls3_v=\\'state bb\\'\\\">set state=bb</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"alert(ht(\\\'sp-cls3-id\\\').className)\\\">get className</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls3-id\\\').className= \\\'ht-selected\\\';\\\">set className=ht-selected</span> \\\n"+
+						"	<span class=ht-cmd onclick=\\\"ht(\\\'sp-cls3-id\\\').className= \\\'\\\';\\\" style=\\'margin-right:2em;\\'>set className=</span> //string<br>\\\n"+
 						
 							
 						"<br><br><br>';\n"+
@@ -182,6 +206,9 @@
 						"	inp_v: 'bbb',\n"+
 						"	dis_v: '',\n"+
 						"	dis_v2: false,\n"+
+						"	cls_v: false,\n"+
+						"	cls2_v: false,\n"+
+						"	cls3_v: 'state aa',\n"+
 						"};\n"+
 						"window.myObj=myObj;\n"+
 						"\n"+
@@ -207,6 +234,10 @@
 						"	['sp-display2'	,'style'		,{typeItem:'display',valueMapper:{false:'none',true:''}}	,'dis_v2',	{ biDirection:true, valueMapper:{'none':false,'':true}} ],\n"+
 						"	['sp-display2-chk'	,'prop'		,{typeItem:'checked',valueMapper:{true:false,false:true}}	,'dis_v2',	{ biDirection:true, valueMapper:{true:false,false:true}} ],\n"+
 						"	['sp-display2-chk2'	,'prop'		,'checked'	,'dis_v2',	0x2 ],\n"+
+						"\n"+
+						"	['sp-cls'	,'class'		,'ht-selected'	,'cls_v',	true ],\n"+
+						"	['sp-cls2'	,'class'		,{typeItem:'ht-selected',valueMapper:{true:false,false:true}}	,'cls2_v',		{ biDirection:true, valueMapper:{true:false,false:true}} ],\n"+
+						"	['sp-cls3'	,'class'		,{typeItem:'ht-selected',valueMapper:function(v){console.log(v); return v.indexOf('aa')>0;}}	,'cls3_v',		{ biDirection:true, valueMapper:function(v){console.log('js',v); return 'state '+(v?'aa':'bb');}} ],\n"+
 						"];\n"+
 						"\n"+
 						"var ret= ht.bindByName('divResult3',myObj,myConfig);\n" +

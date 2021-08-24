@@ -364,7 +364,7 @@
 					attribute binding,
 					
 						[ "namePath", "attr", "title", "propertyName", extraArgument={ biDirection } ]
-						[ "namePath", "attr", "title", "methodName" | function, extraArgument ]
+						[ "namePath", "attr", "title", "methodName" | function, extraArgument ]		//refer to MutationRecord
 				
 				"prop":
 					property binding,
@@ -376,7 +376,13 @@
 					style binding
 					
 						[ "namePath", "style", "display", "propertyName", extraArgument={ biDirection } ]
-						[ "namePath", "style", "display", "methodName" | function, extraArgument ]
+						[ "namePath", "style", "display", "methodName" | function, extraArgument ]		//will also evoke on any other style change; refer to MutationRecord; 
+				
+				"class":
+					element class binding. default binding member is boolean type.
+					
+						[ "namePath", "class", "myClass", "propertyName", extraArgument={ biDirection } ]
+						[ "namePath", "class", "myClass", "methodName" | function, extraArgument ]		//will also evoke on any other class change; refer to MutationRecord
 				
 	*/
 	
@@ -595,6 +601,41 @@
 			if( biDirection ) {
 				observeSingleMutation( elItem, { attributes:true, attributeFilter:["style"], attributeOldValue:true },
 					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
+				);
+			}
+			
+			//init value
+			obj[member]= v0;
+			
+			return true;
+		}
+		
+		//bind class
+		if( type==="class" ){
+			
+			//function binding
+			if( memberIsFunction ){
+				observeSingleMutation( elItem, { attributes:true, attributeFilter:["class"], attributeOldValue:true },
+					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
+				);
+				return true;
+			}
+			
+			//variable member
+			var v0= findWithFilter( null, memberValue, mapValue( elItem.classList.contains(typeItem), jsValueMapper ) );
+			
+			enclosePropertyDescriptor( obj, member,
+				function(v){
+					v= !! mapValue( v, domValueMapper );
+					if( v && ! ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.add(typeItem);
+					else if( !v && ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.remove(typeItem);
+				},
+				function(){ return mapValue( ele(elItemId).classList.contains(typeItem), jsValueMapper ); }
+			);
+			
+			if( biDirection ) {
+				observeSingleMutation( elItem, { attributes:true, attributeFilter:["class"], attributeOldValue:true },
+					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
 				);
 			}
 			
