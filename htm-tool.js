@@ -206,8 +206,19 @@
 		return Error(text);
 	}
 	
-	//callback( mutationItem, observer )
+	/*
+		options
+			options for MutationObserver.observe().
+			
+			if it's a string type, then it will be convert to an attribute observer.
+			
+		callback
+			callback( mutationItem, observer )
+			
+	*/
 	var observeSingleMutation= function( target, options, callback ){
+		if( typeof options==="string" ) options= { attributes:true, attributeFilter:[options], attributeOldValue:true };
+		
 		var mo= new MutationObserver( function(mutationList, observer){ return callback( mutationList[mutationList.length-1], observer ); } );
 		mo.observe(target, options);
 		return mo;
@@ -313,41 +324,41 @@
 				
 				"type"
 					dom type string
+				
+				typeOption
+					dom type option
 					
-					typeOption
-						dom type option
-						
-						".typeItem"
-							dom type sub-item string;
-							shortcut argument is a string;
-						
-						.valueMapper
-							a value mapper for setting dom item, refer to mapValue().
+					".typeItem"
+						dom type sub-item string;
+						shortcut argument is a string;
+					
+					.valueMapper
+						a value mapper for setting dom item, refer to mapValue().
 				
 				member
 					js member
 						"propertyName" | "methodName" | function;
+				
+				memberOption
+					js member option
 					
-					memberOption
-						js member option
+					.biDirection
+						set true to bind both from js to dom and from dom to js;
+						if not set, bind in default way;
+						shortcut argument is a boolean value, or a number value contain 0x1;
 						
-						.biDirection
-							set true to bind both from js to dom and from dom to js;
-							if not set, bind in default way;
-							shortcut argument is a boolean value, or a number value contain 0x1;
-							
-						.notifyEvent
-							set name string of bi-direction notify event ( will automatically set biDirection=true );
-							if not set, use default event "change";
-							shortcut argument is a string;
-						
-						.watchJs
-							if set true, for type "prop", watch dom property change from js ( will automatically set biDirection=true ).
-							shortcut argument is a number value contain 0x2;
-						
-						.valueMapper
-							a value mapper for setting js member, refer to mapValue().
-						
+					.notifyEvent
+						set name string of bi-direction notify event ( will automatically set biDirection=true );
+						if not set, use default event "change";
+						shortcut argument is a string;
+					
+					.watchJs
+						if set true, for type "prop", watch dom property change from js ( will automatically set biDirection=true ).
+						shortcut argument is a number value contain 0x2;
+					
+					.valueMapper
+						a value mapper for setting js member, refer to mapValue().
+					
 			type format:
 				
 				"on":
@@ -505,7 +516,7 @@
 			
 			//function binding
 			if( memberIsFunction ){
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:[typeItem], attributeOldValue:true },
+				observeSingleMutation( elItem, typeItem,
 					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
 				);
 				return true;
@@ -523,7 +534,7 @@
 			);
 			
 			if( biDirection ) {
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:[typeItem], attributeOldValue:true },
+				observeSingleMutation( elItem, typeItem,
 					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
 				);
 			}
@@ -581,7 +592,7 @@
 			
 			//function binding
 			if( memberIsFunction ){
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:["style"], attributeOldValue:true },
+				observeSingleMutation( elItem, "style",
 					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
 				);
 				return true;
@@ -599,7 +610,7 @@
 			);
 			
 			if( biDirection ) {
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:["style"], attributeOldValue:true },
+				observeSingleMutation( elItem, "style",
 					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
 				);
 			}
@@ -615,7 +626,7 @@
 			
 			//function binding
 			if( memberIsFunction ){
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:["class"], attributeOldValue:true },
+				observeSingleMutation( elItem, "class",
 					function( mutationItem, observer ){ return memberValue.apply( memberThis || this, [mutationItem, observer, memberOption] ); }
 				);
 				return true;
@@ -634,7 +645,7 @@
 			);
 			
 			if( biDirection ) {
-				observeSingleMutation( elItem, { attributes:true, attributeFilter:["class"], attributeOldValue:true },
+				observeSingleMutation( elItem, "class",
 					function( mutationItem, observer ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
 				);
 			}
