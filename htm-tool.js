@@ -511,32 +511,75 @@
 			return true;
 		}
 		
-		//bind attribute
-		if( type==="attr" ){
-			
-			//function binding
+		//-------------------------------------
+		//bind attribute group
+		if( type==="attr" || type==="style" || type==="css" || type==="class" ){
+			//bind attribute event
 			if( memberIsFunction ){
-				observeSingleMutation( elItem, typeItem,
+				var attrName= ( type==="attr" )? typeItem : type;
+				if( attrName==="css" ) attrName= "style";
+				
+				observeSingleMutation( elItem, attrName,
 					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
 				);
 				return true;
 			}
 			
-			//variable member
-			var v0= findWithFilter( null, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
-			
-			enclosePropertyDescriptor( obj, member,
-				function(v){
-					v=""+mapValue( v, domValueMapper );
-					if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v);
-				},
-				function(){ return mapValue( ele(elItemId).getAttribute(typeItem), jsValueMapper ); }
-			);
-			
-			if( biDirection ) {
-				observeSingleMutation( elItem, typeItem,
-					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
+			var v0;
+			if( type==="attr" ){		//bind attribute
+				//variable member
+				v0= findWithFilter( null, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
+				
+				enclosePropertyDescriptor( obj, member,
+					function(v){
+						v=""+mapValue( v, domValueMapper );
+						if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v);
+					},
+					function(){ return mapValue( ele(elItemId).getAttribute(typeItem), jsValueMapper ); }
 				);
+				
+				if( biDirection ) {
+					observeSingleMutation( elItem, typeItem,
+						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
+					);
+				}
+			}
+			else if( type==="style" || type==="css" ){		//bind style
+				//variable member
+				var v0= findWithFilter( null, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
+				
+				enclosePropertyDescriptor( obj, member,
+					function(v){
+						v=""+mapValue( v, domValueMapper );
+						if( ele(elItemId).style[typeItem] !==v ) ele(elItemId).style[typeItem]= v;
+					},
+					function(){ return mapValue( ele(elItemId).style[typeItem], jsValueMapper ); }
+				);
+				
+				if( biDirection ) {
+					observeSingleMutation( elItem, "style",
+						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
+					);
+				}
+			}
+			else if( type==="class" ){		//bind class
+				//variable member
+				var v0= findWithFilter( null, memberValue, mapValue( elItem.classList.contains(typeItem), jsValueMapper ) );
+				
+				enclosePropertyDescriptor( obj, member,
+					function(v){
+						v= !! mapValue( v, domValueMapper );
+						if( v && ! ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.add(typeItem);
+						else if( !v && ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.remove(typeItem);
+					},
+					function(){ return mapValue( ele(elItemId).classList.contains(typeItem), jsValueMapper ); }
+				);
+				
+				if( biDirection ) {
+					observeSingleMutation( elItem, "class",
+						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
+					);
+				}
 			}
 			
 			//init value
@@ -545,6 +588,7 @@
 			return true;
 		}
 		
+		//-------------------------------------
 		//bind property
 		if( type==="prop" ){
 			if( !(typeItem in elItem ) ) return formatError("bind property unfound", typeItem, bindItem );
@@ -578,75 +622,6 @@
 			if( watchJs ) {
 				enclosePropertyDescriptor( elItem, typeItem,
 					function(v){ dispatchEventByName( elItemId, notifyEvent || "change", 0 ); }
-				);
-			}
-			
-			//init value
-			obj[member]= v0;
-			
-			return true;
-		}
-		
-		//bind style
-		if( type==="style" || type==="css" ){
-			
-			//function binding
-			if( memberIsFunction ){
-				observeSingleMutation( elItem, "style",
-					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
-				);
-				return true;
-			}
-			
-			//variable member
-			var v0= findWithFilter( null, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
-			
-			enclosePropertyDescriptor( obj, member,
-				function(v){
-					v=""+mapValue( v, domValueMapper );
-					if( ele(elItemId).style[typeItem] !==v ) ele(elItemId).style[typeItem]= v;
-				},
-				function(){ return mapValue( ele(elItemId).style[typeItem], jsValueMapper ); }
-			);
-			
-			if( biDirection ) {
-				observeSingleMutation( elItem, "style",
-					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
-				);
-			}
-			
-			//init value
-			obj[member]= v0;
-			
-			return true;
-		}
-		
-		//bind class
-		if( type==="class" ){
-			
-			//function binding
-			if( memberIsFunction ){
-				observeSingleMutation( elItem, "class",
-					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
-				);
-				return true;
-			}
-			
-			//variable member
-			var v0= findWithFilter( null, memberValue, mapValue( elItem.classList.contains(typeItem), jsValueMapper ) );
-			
-			enclosePropertyDescriptor( obj, member,
-				function(v){
-					v= !! mapValue( v, domValueMapper );
-					if( v && ! ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.add(typeItem);
-					else if( !v && ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.remove(typeItem);
-				},
-				function(){ return mapValue( ele(elItemId).classList.contains(typeItem), jsValueMapper ); }
-			);
-			
-			if( biDirection ) {
-				observeSingleMutation( elItem, "class",
-					function( mutationItem ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
 				);
 			}
 			
