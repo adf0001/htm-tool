@@ -925,6 +925,8 @@
 		dragSet: null,	//map drag start-key to drag start item; drag item: {itemArray,pageX0,pageY0,from,elStart,key}
 		dragSetCount: 0,
 		
+		moveChanged: false,		//move changed flag
+		
 		init: function(){		//manually called constructor
 			this.dragSet= {};
 			this.dragSetCount= 0;
@@ -982,6 +984,8 @@
 				document.addEventListener('touchmove',this._onMove,{passive:false});
 				document.addEventListener('touchend',this._onStop,false);
 			}
+			
+			this.moveChanged=false;
 		},
 		
 		//return pairs array of [ evt1, dragItem1, evt2, dragItem2, ... ]
@@ -1055,16 +1059,19 @@
 			}
 		},
 		
+		onFirstMove: null,	//function (evt) {},
+		
 		onMove: function (evt) {
 			var list= this.getEventList( evt );
 			if( !list ) return false;
 			
-			var i,imax= list.length,dragItem;
+			var i,imax= list.length,dragItem,changed;
 			for(i=0;i<imax;i+=2){
 				dragItem= list[i+1];
 				
 				var dx = list[i].pageX - dragItem.pageX0;
 				var dy = list[i].pageY - dragItem.pageY0;
+				if( dx||dy) changed=1;
 				
 				var j, jmax = dragItem.itemArray.length, ai;
 				for (j = 0; j < jmax; j++) {
@@ -1075,6 +1082,14 @@
 			}
 			
 			if( evt.type=="touchmove" ){ evt.preventDefault(); }
+			
+			//console.log("move "+ list[0].pageX +","+ list[0].pageY );
+			
+			if( !this.moveChanged && changed ){
+				this.moveChanged= true;
+				if( this.onFirstMove ) this.onFirstMove(evt);
+			}
+			
 		},
 		
 		onKey: function (evt) {

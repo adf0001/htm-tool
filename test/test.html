@@ -309,7 +309,7 @@
 							"\tstart: function ( evt, el1){\n"+
 								"\t\tht.dragObject.start.apply( this, arguments );\n"+
 								"\t\tthis.el1=el1;\n"+
-								"\t\tthis.el1.style.background='lime';\n"+
+								"\t\tthis.el1.style.background='yellow';\n"+
 							"\t},\n"+
 							"\t\n"+
 							"\tonStop: function ( evt ) {\n"+
@@ -317,9 +317,12 @@
 								"\t\tthis.el1.style.background='';\n"+
 							"\t},\n"+
 							"\t\n"+
+							"\tonFirstMove: function (evt) {\n"+
+								"\t\tthis.el1.style.background='lime';\n"+
+							"\t},\n"+
 							"\tonMove: function (evt) {\n"+
 								"\t\tht.dragObject.onMove.apply( this, arguments );\n"+
-								"\t\tthis.el1.textContent=this.el1.offsetLeft+','+this.el1.offsetTop;\n"+
+								"\t\tif(this.moveChanged)this.el1.textContent=this.el1.offsetLeft+','+this.el1.offsetTop;\n"+
 							"\t},\n"+
 						"});\n"+
 						"myDragObject.init();\n"+
