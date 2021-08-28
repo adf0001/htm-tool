@@ -309,15 +309,16 @@
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
-	// bind by name
+	// bind element & bind by name
 	
 	/*
-		bindConfig:
-			binding config, a bind-item Array
-			[
-				[ "namePath", "type", typeOption | "typeItem", member, memberOption | .biDirection/0x1 | ".notifyEvent" | .watchJs/0x2 ],		//bind-item-1
-				...		//bind-item-N
-			]
+		bind item:
+			an array to configure element binding,
+			[ "namePath", "type", typeOption, member, memberOption ]	//basic format
+			where type and typeOption is related to dom object, while member and memberOption is related to js object.
+			
+			or
+			[ "namePath", "type", typeOption | "typeItem", member, memberOption | .biDirection/0x1 | ".notifyEvent" | .watchJs/0x2 ]	//shortcut format
 			
 				"namePath"
 					name path string, refer to queryByName()
@@ -377,12 +378,6 @@
 						[ "namePath", "attr", "title", "propertyName", extraArgument={ biDirection } ]
 						[ "namePath", "attr", "title", "methodName" | function, extraArgument ]		//refer to MutationRecord
 				
-				"prop":
-					property binding,
-					
-						[ "namePath", "prop", "value", "propertyName", extraArgument={ notifyEvent, biDirection, watchJs } ]
-						[ "namePath", "prop", "value", "methodName" | function, extraArgument={ notifyEvent, watchJs, listenerOptions } ]
-				
 				"style|css":
 					style binding
 					
@@ -393,11 +388,16 @@
 					element class binding. default binding member is boolean type.
 					
 						[ "namePath", "class", "myClass", "propertyName", extraArgument={ biDirection } ]
-						[ "namePath", "class", "myClass", "methodName" | function, extraArgument ]		//will also evoke on any other class change; refer to MutationRecord
+						[ "namePath", "class", "myClass", "methodName" | function, extraArgument ]		//will also evoke on any other class change; refer to MutationRecord;
 				
+				"prop":
+					property binding,
+					
+						[ "namePath", "prop", "value", "propertyName", extraArgument={ notifyEvent, biDirection, watchJs } ]
+						[ "namePath", "prop", "value", "methodName" | function, extraArgument={ notifyEvent, watchJs, listenerOptions } ]
 	*/
 	
-	//bind-item constant
+	//bind-item index constant
 	var BI_NAME_PATH=	0,
 		BI_TYPE=		1,
 		BI_TYPE_OPTION=	2,
@@ -405,53 +405,12 @@
 		BI_MEMBER_OPTION=	4;
 	
 	//return Error if fail
-	var bindByName= function( el, obj, bindConfig ){
-		el=ele(el);
-		
-		var elLast=el,lastName="";
-		var i,imax= bindConfig.length, bci, ret, namePath;
-		
-		var nm={			//name mapping;
-			"": eleId(elLast)	//map "" to root element
-		};
-		
-		for( i=0;i<imax;i++ ){
-			bci= bindConfig[i];
-			namePath= bci[BI_NAME_PATH]||"";
-			if( typeof namePath !=="string" ) return formatError("bind name path is not a string", namePath, bci );
-			
-			if( ! namePath ){	//omitted "namePath"
-				bci[BI_NAME_PATH]= lastName;	//fill back omitted "namePath"
-				
-				if( i ){	//copy other omitted item from previous value
-					if( !bci[BI_TYPE] ){
-						bci[BI_TYPE]= bindConfig[i-1][BI_TYPE];	//fill back omitted "type"
-						if( !bci[BI_TYPE_OPTION] ) bci[BI_TYPE_OPTION]= bindConfig[i-1][BI_TYPE_OPTION];	//fill back omitted typeOption | "typeItem"
-					}
-				}
-			}
-			else if( namePath!=lastName ){		//new namePath
-				elLast= queryByName( el, namePath );
-				if( !elLast ) return formatError("bind name path unfound", namePath, bci );
-				nm[namePath]=eleId(elLast);
-				lastName= namePath;
-				
-				if( bci.length===1 ) continue;	//only build name mapping
-			}
-			
-			ret= bindElement( elLast, obj, bci );
-			if( ret instanceof Error ) return ret;
-		}
-		return true;
-	}
-	
-	//return Error if fail
-	var bindElement= function( elItem, obj, bindItem ){
+	var bindElement= function( el, obj, bindItem ){
 		
 		//-------------------------------------
 		//arguments
 		
-		var elItemId= eleId(elItem);
+		var elId= eleId(el);
 		
 		//type
 		var type= bindItem[BI_TYPE];
@@ -505,8 +464,8 @@
 			
 			var bindFunc= function(evt){ return memberValue.apply( memberThis || this, [ evt, memberOption]); };
 			
-			if( type=="on" ){ elItem["on"+typeItem]= bindFunc; }
-			else{ elItem.addEventListener( typeItem, bindFunc, memberOption && memberOption.listenerOptions ); }
+			if( type=="on" ){ el["on"+typeItem]= bindFunc; }
+			else{ el.addEventListener( typeItem, bindFunc, memberOption && memberOption.listenerOptions ); }
 			
 			return true;
 		}
@@ -519,7 +478,7 @@
 				var attrName= ( type==="attr" )? typeItem : type;
 				if( attrName==="css" ) attrName= "style";
 				
-				observeSingleMutation( elItem, attrName,
+				observeSingleMutation( el, attrName,
 					function( mutationItem ){ return memberValue.apply( memberThis || this, [mutationItem, memberOption] ); }
 				);
 				return true;
@@ -528,55 +487,55 @@
 			var v0;
 			if( type==="attr" ){		//bind attribute
 				//variable member
-				v0= findWithFilter( null, memberValue, mapValue(elItem.getAttribute(typeItem)||"", jsValueMapper ) );
+				v0= findWithFilter( null, memberValue, mapValue(el.getAttribute(typeItem)||"", jsValueMapper ) );
 				
 				enclosePropertyDescriptor( obj, member,
 					function(v){
 						v=""+mapValue( v, domValueMapper );
-						if( ele(elItemId).getAttribute(typeItem) !==v ) ele(elItemId).setAttribute(typeItem,v);
+						if( ele(elId).getAttribute(typeItem) !==v ) ele(elId).setAttribute(typeItem,v);
 					},
-					function(){ return mapValue( ele(elItemId).getAttribute(typeItem), jsValueMapper ); }
+					function(){ return mapValue( ele(elId).getAttribute(typeItem), jsValueMapper ); }
 				);
 				
 				if( biDirection ) {
-					observeSingleMutation( elItem, typeItem,
+					observeSingleMutation( el, typeItem,
 						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.getAttribute(mutationItem.attributeName)||"", jsValueMapper ); }
 					);
 				}
 			}
 			else if( type==="style" || type==="css" ){		//bind style
 				//variable member
-				var v0= findWithFilter( null, memberValue, mapValue( elItem.style[typeItem]||"", jsValueMapper ) );
+				var v0= findWithFilter( null, memberValue, mapValue( el.style[typeItem]||"", jsValueMapper ) );
 				
 				enclosePropertyDescriptor( obj, member,
 					function(v){
 						v=""+mapValue( v, domValueMapper );
-						if( ele(elItemId).style[typeItem] !==v ) ele(elItemId).style[typeItem]= v;
+						if( ele(elId).style[typeItem] !==v ) ele(elId).style[typeItem]= v;
 					},
-					function(){ return mapValue( ele(elItemId).style[typeItem], jsValueMapper ); }
+					function(){ return mapValue( ele(elId).style[typeItem], jsValueMapper ); }
 				);
 				
 				if( biDirection ) {
-					observeSingleMutation( elItem, "style",
+					observeSingleMutation( el, "style",
 						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.style[typeItem]||"", jsValueMapper ); }
 					);
 				}
 			}
 			else if( type==="class" ){		//bind class
 				//variable member
-				var v0= findWithFilter( null, memberValue, mapValue( elItem.classList.contains(typeItem), jsValueMapper ) );
+				var v0= findWithFilter( null, memberValue, mapValue( el.classList.contains(typeItem), jsValueMapper ) );
 				
 				enclosePropertyDescriptor( obj, member,
 					function(v){
 						v= !! mapValue( v, domValueMapper );
-						if( v && ! ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.add(typeItem);
-						else if( !v && ele(elItemId).classList.contains(typeItem) ) ele(elItemId).classList.remove(typeItem);
+						if( v && ! ele(elId).classList.contains(typeItem) ) ele(elId).classList.add(typeItem);
+						else if( !v && ele(elId).classList.contains(typeItem) ) ele(elId).classList.remove(typeItem);
 					},
-					function(){ return mapValue( ele(elItemId).classList.contains(typeItem), jsValueMapper ); }
+					function(){ return mapValue( ele(elId).classList.contains(typeItem), jsValueMapper ); }
 				);
 				
 				if( biDirection ) {
-					observeSingleMutation( elItem, "class",
+					observeSingleMutation( el, "class",
 						function( mutationItem ){ obj[member]= mapValue( mutationItem.target.classList.contains(typeItem), jsValueMapper ); }
 					);
 				}
@@ -591,37 +550,37 @@
 		//-------------------------------------
 		//bind property
 		if( type==="prop" ){
-			if( !(typeItem in elItem ) ) return formatError("bind property unfound", typeItem, bindItem );
+			if( !(typeItem in el ) ) return formatError("bind property unfound", typeItem, bindItem );
 			
 			//function binding
 			if( memberIsFunction ){
 				var bindFunc= function(evt){ return memberValue.apply( memberThis || this, [ evt, memberOption]); };
-				elItem.addEventListener( notifyEvent || "change", bindFunc, memberOption && memberOption.listenerOptions );
+				el.addEventListener( notifyEvent || "change", bindFunc, memberOption && memberOption.listenerOptions );
 				if( watchJs ) {
-					enclosePropertyDescriptor( elItem, typeItem,
-						function(v){ dispatchEventByName( elItemId, notifyEvent || "change", 0 ); }
+					enclosePropertyDescriptor( el, typeItem,
+						function(v){ dispatchEventByName( elId, notifyEvent || "change", 0 ); }
 					);
 				}
 				return true;
 			}
 			
 			//variable member
-			var v0= findWithFilter( null, memberValue, mapValue(elItem[typeItem]||"", jsValueMapper ) );
+			var v0= findWithFilter( null, memberValue, mapValue(el[typeItem]||"", jsValueMapper ) );
 			
 			enclosePropertyDescriptor( obj, member,
 				function(v){
 					v= mapValue( v, domValueMapper );
-					if( ele(elItemId)[typeItem] !=v ) ele(elItemId)[typeItem]= v;
+					if( ele(elId)[typeItem] !=v ) ele(elId)[typeItem]= v;
 				},
-				function() { return mapValue( ele(elItemId)[typeItem], jsValueMapper ); }
+				function() { return mapValue( ele(elId)[typeItem], jsValueMapper ); }
 			);
 			
 			if( biDirection ) {
-				elItem.addEventListener( notifyEvent || "change", function(evt){ obj[member]= mapValue( ele(elItemId)[typeItem], jsValueMapper ); }, memberOption && memberOption.listenerOptions );
+				el.addEventListener( notifyEvent || "change", function(evt){ obj[member]= mapValue( ele(elId)[typeItem], jsValueMapper ); }, memberOption && memberOption.listenerOptions );
 			}
 			if( watchJs ) {
-				enclosePropertyDescriptor( elItem, typeItem,
-					function(v){ dispatchEventByName( elItemId, notifyEvent || "change", 0 ); }
+				enclosePropertyDescriptor( el, typeItem,
+					function(v){ dispatchEventByName( elId, notifyEvent || "change", 0 ); }
 				);
 			}
 			
@@ -632,6 +591,47 @@
 		}
 		
 		return formatError("unknown bind type",type,bindItem );
+	}
+	
+	//return Error if fail
+	var bindByName= function( el, obj, bindItemArray ){
+		el=ele(el);
+		
+		var elLast=el,lastName="";
+		var i,imax= bindItemArray.length, bi, ret, namePath;
+		
+		var nm={			//name mapping;
+			"": eleId(elLast)	//map "" to root element
+		};
+		
+		for( i=0;i<imax;i++ ){
+			bi= bindItemArray[i];
+			namePath= bi[BI_NAME_PATH]||"";
+			if( typeof namePath !=="string" ) return formatError("bind name path is not a string", namePath, bi );
+			
+			if( ! namePath ){	//omitted "namePath"
+				bi[BI_NAME_PATH]= lastName;	//fill back omitted "namePath"
+				
+				if( i ){	//copy other omitted item from previous value
+					if( !bi[BI_TYPE] ){
+						bi[BI_TYPE]= bindItemArray[i-1][BI_TYPE];	//fill back omitted "type"
+						if( !bi[BI_TYPE_OPTION] ) bi[BI_TYPE_OPTION]= bindItemArray[i-1][BI_TYPE_OPTION];	//fill back omitted typeOption | "typeItem"
+					}
+				}
+			}
+			else if( namePath!=lastName ){		//new namePath
+				elLast= queryByName( el, namePath );
+				if( !elLast ) return formatError("bind name path unfound", namePath, bi );
+				nm[namePath]=eleId(elLast);
+				lastName= namePath;
+				
+				if( bi.length===1 ) continue;	//only build name mapping
+			}
+			
+			ret= bindElement( elLast, obj, bi );
+			if( ret instanceof Error ) return ret;
+		}
+		return true;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
