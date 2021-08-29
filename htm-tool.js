@@ -715,22 +715,18 @@ var setSelected= function( selectList, unselectList, selected ){
 	if( selectList ){
 		if( !(selectList instanceof Array)) selectList=[selectList];
 		
-		var i,imax= selectList.length,si;
+		var i,imax= selectList.length;
 		for(i=0;i<imax;i++){
-			si= selectList[i];
-			si= ele(si);
-			if( !si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className+=" ht-selected";
+			ele( selectList[i] ).classList.add("ht-selected");
 		}
 	}
 	
 	if( unselectList ){
 		if( !(unselectList instanceof Array)) unselectList=[unselectList];
 		
-		var i,imax= unselectList.length,si;
+		var i,imax= unselectList.length;
 		for(i=0;i<imax;i++){
-			si= unselectList[i];
-			si= ele(si);
-			if( si.className.match(/(^|\s)ht-selected(\s|$)/ ) ) si.className= si.className.replace(/(^|\s)ht-selected(\s|$)/g,"$1$2");
+			ele( unselectList[i] ).classList.remove("ht-selected");
 		}
 	}
 }
@@ -798,19 +794,16 @@ var selectTabItem= function ( group, idTab, idPanel ){
 	
 	if( lastTabItem[0]==idTab && lastTabItem[1]==idPanel ) return;
 	
-	var el;
 	//hide last
 	if( lastTabItem[0] ){
-		el= eleFromId(lastTabItem[0]);
-		el.className= el.className.replace(/ht\-tab\-item\-selected/g,"").replace(/\s+/g," " );
+		eleFromId(lastTabItem[0]).classList.remove("ht-tab-item-selected");
 	}
 	if( lastTabItem[1] ){
 		eleFromId(lastTabItem[1]).style.display="none";
 	}
 	
 	//show selected
-	el= eleFromId(idTab);
-	el.className= (el.className+" ht-tab-item-selected").replace(/\s+/g," " );
+	eleFromId(idTab).classList.add("ht-tab-item-selected");
 	if( idPanel ) eleFromId(idPanel).style.display="";
 	
 	lastTabItem[0]= idTab;
@@ -903,9 +896,8 @@ var dragObject= {
 		if( !evt ) evt= window.event;
 		
 		//check if target is an input
-		if( evt.target.tagName.match( /^(input|button|textarea|select|option.*|a|label)$/i ) || (evt.target.className && evt.target.className.match("(ht-input|ht-cmd)(\s|$)") ) ){
-			return false;
-		}
+		if( evt.target.tagName.match( /^(input|button|textarea|select|option.*|a|label)$/i ) ||
+			evt.target.classList.contains("ht-input") || evt.target.classList.contains("ht-cmd") ){ return false; }
 		
 		//unify event and drag-data
 		var dragEvt, dragItem, evtKey;
@@ -1151,7 +1143,7 @@ var showPopup= function( el, modal, cb ){
 	
 	//add back
 	if( ! el.querySelector(".ht-popup-back") ){
-		prependHtml( el, "<div class='ht-popup-back' onclick=\"if(this.parentNode.querySelector('.ht-popup-body').className.indexOf('ht-popup-modal')<0)"+globalVarRef+".hidePopup(this);\"></div>" );
+		prependHtml( el, "<div class='ht-popup-back' onclick=\"if(!this.parentNode.querySelector('.ht-popup-body').classList.contains('ht-popup-modal'))"+globalVarRef+".hidePopup(this);\"></div>" );
 	}
 	
 	//add close button
@@ -1162,11 +1154,11 @@ var showPopup= function( el, modal, cb ){
 	
 	//modal setting
 	if( modal ){
-		if( elBody.className.indexOf("ht-popup-modal")<0 ){ elBody.className += " ht-popup-modal"; }
+		elBody.classList.add("ht-popup-modal");
 		elClose.innerHTML="[&times;]";
 	}
 	else{
-		if( elBody.className.indexOf("ht-popup-modal")>=0 ){ elBody.className = elBody.className.replace("ht-popup-modal",""); }
+		elBody.classList.remove("ht-popup-modal");
 		elClose.innerHTML="(&times;)";
 	}
 	
@@ -1181,7 +1173,7 @@ var hidePopup= function( el, data ){
 	el= ele(el);
 	
 	//find .ht-popup
-	while( el && (! el.className || ! el.className.match(/ht-popup(\s|$)/) ) ) { el=el.parentNode; }
+	while( el && ! el.classList.contains("ht-popup") ) { el=el.parentNode; }
 	if( !el ){
 		console.error( "top ht-popup unfound" );
 		return;
