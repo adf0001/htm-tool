@@ -130,6 +130,20 @@ testData={		//global variable
 			function(error,data){ht('divResult3').textContent=JSON.stringify(error?error:data.json); done(); }
 		);
 	},
+	
+	"css.ht-cmd": function(done){
+		return "<span class='ht-cmd'>cmd .ht-cmd style sample</span>";
+	},
+	"css.ht-hover": function(done){
+		return "<span class='ht-hover'>cmd .ht-hover style sample</span>";
+	},
+	"css.ht-selected & setSelected()": function(done){
+		return "<span class='ht-selected'>cmd .ht-selected style sample</span>"+
+				"<div><span>111 </span><span>222 </span><span>333 </span><span>444 </span>"+
+					"<label><input type=checkbox onchange='ht.setSelected([parentNode.parentNode.childNodes[0],parentNode.parentNode.childNodes[2]],"+
+								"[parentNode.parentNode.childNodes[1],parentNode.parentNode.childNodes[3]],this.checked);'></input>toggle</label>"+
+				"</div>";
+	},
 
 
 
