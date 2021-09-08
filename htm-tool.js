@@ -184,10 +184,18 @@ var getSearchPart= function( name, searchString ){
 	return mr && mr[2];
 }
 
+/*
+	use case 1, format an error
+		ht.formatError( text, relatedKey, json )
+		ht.Error( text, relatedKey, json )
+	use case 2, make sure return an Error
+		ht.formatError( textOrError )
+		ht.Error( textOrError )
+*/
 var formatError= function( text, relatedKey, json ){
 	if( typeof relatedKey !== "undefined" ) text+=", "+JSON.stringify(relatedKey);
 	if( typeof json !== "undefined" ) text+=", "+JSON.stringify(json);
-	return Error(text);
+	return (text instanceof Error)? text : Error(text);
 }
 
 /*
@@ -466,6 +474,8 @@ module.exports= Object.assign(
 		deriveObject: deriveObject,
 		
 		formatError: formatError,
+		Error: formatError,
+		
 		observeSingleMutation: observeSingleMutation,
 		getPropertyDescriptor: getPropertyDescriptor,
 		enclosePropertyDescriptor: enclosePropertyDescriptor,

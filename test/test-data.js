@@ -102,6 +102,11 @@ testData={		//global variable
 			ht.getSearchPart('a','?aa=1&a=2&cc=3') ==='2' && 
 			ht.getSearchPart('d','?aa=1&a=2&cc=3') ===null
 	},
+	"formatError() & Error()": function(done){
+		var err1= ht.formatError('err1','key1',{a:1,b:2});
+		
+		return err1.message ==='err1, "key1", {"a":1,"b":2}' && err1===ht.Error(ht.Error(ht.Error(err1)));
+	},
 	"deriveObject()": function(done){
 		var a= {
 			f1: function(){return 1;},
