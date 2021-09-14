@@ -330,7 +330,7 @@ var httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
 				if( cb ) cb ( null, { responseText: xq.responseText, lastKey: lastKey} );
 			}
 			else {
-				if( cb ) cb ( { error: "status", status: xq.status, responseText: xq.responseText, lastKey: lastKey} );
+				if( cb ) cb ( { error: "status "+ xq.status, status: xq.status, responseText: xq.responseText, lastKey: lastKey} );
 			}
         }
     }
