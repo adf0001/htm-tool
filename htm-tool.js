@@ -335,7 +335,7 @@ var httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
         }
     }
 	
-	xq.send(postData);
+	return xq.send(postData);
 }
 
 /*
@@ -343,7 +343,7 @@ var httpRequest= function( url, methodOrOptions, postData, cb, lastKey ){
 		function( error:{ error, status, responseText, lastKey}, data:{json,responseText, lastKey} )
 */
 var httpRequestJson= function( url, methodOrOptions, postData, cb, lastKey ){
-	httpRequest(url, methodOrOptions, postData, function( error, data ){
+	return httpRequest(url, methodOrOptions, postData, function( error, data ){
 		if( error ){ if( cb ) cb(error,data); return; }
 		
 		try{
