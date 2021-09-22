@@ -71,6 +71,20 @@ var dateDiffStr= function ( startTime, endTime, abbr ){
 		sign + (days?(days + '天'):"") + (hours?(hours + '时'):"") + minutes + '分';
 }
 
+var dirPart= function( path ){	//like path.dirname() + "/"
+	return path.replace( /[\\\/]+$/ ,"").replace( /[^\\\/]+$/ ,"");
+}
+
+var normalizePath= function( path ){		//like path.normalize()
+	path= path.replace( /(^|[\\\/])(\.([\\\/]|$))+/g, "$1" );
+	var last="";
+	while( path && last!=path ){
+		last= path;
+		path= path.replace( /(^|[\\\/])([^\.\\\/]|\.+[^\.\\\/])[^\\\/]*[\\\/]\.\.([\\\/]|$)/, "$1" );
+	}
+	return path;
+}
+
 //if the element by `styleId` already exists, its cssText will be fully replaced.
 var addCssText= function ( cssText, styleId ) {
 	var style;
@@ -460,6 +474,9 @@ module.exports= Object.assign(
 		dateString19: dateString19,
 		dateString14: dateString14,
 		dateDiffStr: dateDiffStr,
+		
+		dirPart: dirPart,
+		normalizePath: normalizePath,
 		
 		addCssText: addCssText,
 		
