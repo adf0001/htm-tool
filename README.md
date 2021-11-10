@@ -1,5 +1,5 @@
 # htm-tool
-htm tool.
+htm tool set.
 
 ## install
 

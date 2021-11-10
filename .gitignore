@@ -1,3 +1,6 @@
 /release
 /dev-uglify.bat
 /test/bak
+/node_modules
+/package-lock.json
+/debug
