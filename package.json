@@ -21,6 +21,7 @@
   "homepage": "https://github.com/adf0001/htm-tool#readme",
   "dependencies": {
     "add-css-text": "^1.0.1",
+    "bind-ui": "^1.0.3",
     "browser-http-request": "^1.0.3",
     "create-assign": "^1.0.1",
     "dom-document-tool": "^1.0.1",
