@@ -12,6 +12,7 @@ var format_error_tool = require("format-error-tool");
 var browser_http_request = require("browser-http-request");
 var htm_tool_css = require("htm-tool-css");
 var bind_ui = require("bind-ui");
+var htm_tool_ui = require("htm-tool-ui");
 
 // global variable name
 var globalVarName = "htm-tool@npm";
@@ -30,14 +31,14 @@ module.exports = Object.assign(
 
 		eleFromId: ele.fromId,
 		eleId: ele.id,
-		
+
 		eleOffset: ele.offset,
 
 		//tmkt
+		tmkt: tmkt,
 		dateString19: tmkt.toString19,
 		dateString14: tmkt.toString14,
 		dateDiffDhm: tmkt.diffDhm,
-		tmkt: tmkt,
 
 		//path
 		dirPart: path_tool.dirPart,
@@ -59,6 +60,7 @@ module.exports = Object.assign(
 		queryByNamePath: query_by_name_path,
 
 		//derive object
+		derive: create_assign,
 		deriveObject: create_assign,
 
 		//error
@@ -82,6 +84,41 @@ module.exports = Object.assign(
 
 		//htm-tool css
 		setSelected: htm_tool_css.setSelected,
+
+		//------------------------------
+		//htm-tool ui
+		ui: htm_tool_ui,
+
+		//tab
+		initTabControl: htm_tool_ui.initTabControl,
+
+		//log
+		showLog: htm_tool_ui.showLog,
+
+		//drag
+		dragObject: htm_tool_ui.dragObject,
+		startDrag: htm_tool_ui.startDrag,
+		startDragListener: htm_tool_ui.startDragListener,
+
+		//popup
+		showPopup: htm_tool_ui.showPopup,
+		hidePopup: htm_tool_ui.hidePopup,
+
+		popupCloseListener: htm_tool_ui.popupCloseListener,
+		popupCloseByNameListener: htm_tool_ui.popupCloseByNameListener,
+
+		//popup html
+		showPopupHtml: htm_tool_ui.showPopupHtml,
+
+		alert: htm_tool_ui.alert,
+		confirm: htm_tool_ui.confirm,
+		confirmYnc: htm_tool_ui.confirmYnc,
+		prompt: htm_tool_ui.prompt,
+		selectRadioList: htm_tool_ui.selectRadioList,
+		selectCheckboxList: htm_tool_ui.selectCheckboxList,
+		selectButtonList: htm_tool_ui.selectButtonList,
+
+		//------------------------------
 
 	}
 );
