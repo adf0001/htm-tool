@@ -1,13 +1,15 @@
 # htm-tool
 htm tool set.
 
-## install
-
-`npm install htm-tool`
-
-## usage examples
+# Install
 
 ```
+npm install htm-tool
+```
+
+# Usage
+
+```javascript
 	var ht= require( "htm-tool" );
 	console.log( ht.eleId( null, 'myId-' ) );
 ```

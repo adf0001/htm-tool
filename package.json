@@ -1,6 +1,6 @@
 {
   "name": "htm-tool",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "htm tool set",
   "main": "htm-tool.js",
   "directories": {
@@ -21,7 +21,8 @@
   "homepage": "https://github.com/adf0001/htm-tool#readme",
   "dependencies": {
     "add-css-text": "^1.0.1",
-    "bind-ui": "^1.0.3",
+    "bind-element": "^1.0.1",
+    "bind-ui": "^1.0.4",
     "browser-http-request": "^1.0.3",
     "create-assign": "^1.0.1",
     "dom-document-tool": "^1.0.1",

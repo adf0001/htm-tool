@@ -13,6 +13,7 @@ var browser_http_request = require("browser-http-request");
 var htm_tool_css = require("htm-tool-css");
 var bind_ui = require("bind-ui");
 var htm_tool_ui = require("htm-tool-ui");
+var bind_element = require("bind-element");
 
 // global variable name
 var globalVarName = "htm-tool@npm";
@@ -79,8 +80,10 @@ module.exports = Object.assign(
 
 		//bind-ui
 		bindUi: bind_ui,
-		bindElement: bind_ui.bindElement,
-		bindByName: bind_ui.bindByName,
+
+		//bind-element
+		bindElement: bind_element,
+		bindElementArray: bind_element.array,
 
 		//htm-tool css
 		setSelected: htm_tool_css.setSelected,
