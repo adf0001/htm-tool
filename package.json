@@ -13,6 +13,10 @@
     "type": "git",
     "url": "git+https://github.com/adf0001/htm-tool.git"
   },
+  "keywords": [
+    "htm",
+    "tool"
+  ],
   "author": "fwg",
   "license": "ISC",
   "bugs": {
