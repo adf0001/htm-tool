@@ -2,6 +2,7 @@
 // htm-tool @ npm, htm tool set.
 
 var ele = require("element-tool");
+var element_offset = require("element-offset");
 var tmkt = require("tmkt");
 var path_tool = require("path-tool");
 var add_css_text = require("add-css-text");
@@ -33,7 +34,7 @@ module.exports = Object.assign(
 		eleFromId: ele.fromId,
 		eleId: ele.id,
 
-		eleOffset: ele.offset,
+		eleOffset: element_offset,
 
 		//tmkt
 		tmkt: tmkt,
@@ -94,6 +95,11 @@ module.exports = Object.assign(
 
 		//tab
 		initTabControl: htm_tool_ui.initTabControl,
+		getLastTabId: htm_tool_ui.getLastTabId,
+
+		//radio group
+		initRadioGroup: htm_tool_ui.initRadioGroup,
+		getRadioGroupValue: htm_tool_ui.getRadioGroupValue,
 
 		//log
 		showLog: htm_tool_ui.showLog,

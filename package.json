@@ -1,6 +1,6 @@
 {
   "name": "htm-tool",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "htm tool set",
   "main": "htm-tool.js",
   "directories": {
@@ -27,13 +27,14 @@
     "add-css-text": "^1.0.1",
     "bind-element": "^1.0.1",
     "bind-ui": "^1.0.5",
-    "browser-http-request": "^1.0.3",
+    "browser-http-request": "^1.0.4",
     "create-assign": "^1.0.1",
     "dom-document-tool": "^1.0.1",
-    "element-tool": "^1.0.2",
+    "element-offset": "^1.0.1",
+    "element-tool": "^1.0.3",
     "format-error-tool": "^1.0.1",
     "htm-tool-css": "^1.0.1",
-    "htm-tool-ui": "^1.0.3",
+    "htm-tool-ui": "^1.0.4",
     "path-tool": "^1.0.1",
     "query-by-name-path": "^1.0.1",
     "tmkt": "^1.0.6"
