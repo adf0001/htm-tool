@@ -93,30 +93,16 @@ module.exports = Object.assign(
 		//htm-tool ui
 		ui: htm_tool_ui,
 
-		//tab
-		initTabControl: htm_tool_ui.initTabControl,
-		getLastTabId: htm_tool_ui.getLastTabId,
-
-		//radio group
-		initRadioGroup: htm_tool_ui.initRadioGroup,
-		getRadioGroupValue: htm_tool_ui.getRadioGroupValue,
-
 		//log
-		showLog: htm_tool_ui.showLog,
+		showLog: htm_tool_ui.show_log,
+		show_log: htm_tool_ui.show_log,
 
 		//drag
-		dragObject: htm_tool_ui.dragObject,
-		startDrag: htm_tool_ui.startDrag,
-		startDragListener: htm_tool_ui.startDragListener,
+		drag: htm_tool_ui.drag,
 
 		//popup
-		showPopup: htm_tool_ui.showPopup,
-		hidePopup: htm_tool_ui.hidePopup,
+		popup: htm_tool_ui.popup,
 
-		popupCloseListener: htm_tool_ui.popupCloseListener,
-		popupCloseByNameListener: htm_tool_ui.popupCloseByNameListener,
-
-		//popup html
 		showPopupHtml: htm_tool_ui.showPopupHtml,
 
 		alert: htm_tool_ui.alert,
@@ -126,8 +112,6 @@ module.exports = Object.assign(
 		selectRadioList: htm_tool_ui.selectRadioList,
 		selectCheckboxList: htm_tool_ui.selectCheckboxList,
 		selectButtonList: htm_tool_ui.selectButtonList,
-
-		//------------------------------
 
 	}
 );
