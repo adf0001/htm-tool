@@ -59,9 +59,11 @@ module.exports = Object.assign(
 		observeSingleMutation: dom_document_tool.observeSingleMutation,
 
 		//query by name path
+		query_by_name_path: query_by_name_path,
 		queryByNamePath: query_by_name_path,
 
 		//derive object
+		create_assign: create_assign,
 		derive: create_assign,
 		deriveObject: create_assign,
 
@@ -76,10 +78,12 @@ module.exports = Object.assign(
 		//mapValue: mapValue,
 
 		//xhr
+		browser_http_request: browser_http_request,
 		httpRequest: browser_http_request.requestText,
 		httpRequestJson: browser_http_request.requestJson,
 
 		//bind-ui
+		bind_ui: bind_ui,
 		bindUi: bind_ui,
 
 		//bind-element
@@ -94,8 +98,8 @@ module.exports = Object.assign(
 		ui: htm_tool_ui,
 
 		//log
-		showLog: htm_tool_ui.show_log,
 		show_log: htm_tool_ui.show_log,
+		showLog: htm_tool_ui.showLog,
 
 		//drag
 		drag: htm_tool_ui.drag,
