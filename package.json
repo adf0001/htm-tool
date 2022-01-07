@@ -1,6 +1,6 @@
 {
   "name": "htm-tool",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "htm tool set",
   "main": "htm-tool.js",
   "directories": {
@@ -34,9 +34,9 @@
     "element-tool": "^1.0.3",
     "format-error-tool": "^1.0.1",
     "htm-tool-css": "^1.0.1",
-    "htm-tool-ui": "^1.0.11",
+    "htm-tool-ui": "^1.0.12",
     "path-tool": "^1.0.1",
     "query-by-name-path": "^1.0.1",
-    "tmkt": "^1.0.6"
+    "tmkt": "^1.0.7"
   }
 }
