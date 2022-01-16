@@ -54,7 +54,7 @@ module.exports = Object.assign(
 		insertAdjacent: insert_adjacent_return,
 
 		appendHtml: insert_adjacent_return.append,
-		appendBodyHtml: function (data, isText) { insert_adjacent_return.append(document.body, data, isText); },
+		appendBodyHtml: function (data, isText) { return insert_adjacent_return.append(document.body, data, isText); },
 		prependHtml: insert_adjacent_return.prepend,
 
 		//dom document tool
