@@ -7,6 +7,7 @@ var tmkt = require("tmkt");
 var path_tool = require("path-tool");
 var add_css_text = require("add-css-text");
 var dom_document_tool = require("dom-document-tool");
+var insert_adjacent_return = require("insert-adjacent-return");
 var query_by_name_path = require("query-by-name-path");
 var create_assign = require("create-assign");
 var format_error_tool = require("format-error-tool");
@@ -49,10 +50,14 @@ module.exports = Object.assign(
 		//css tool
 		addCssText: add_css_text,
 
+		//insert adjacent
+		insertAdjacent: insert_adjacent_return,
+
+		appendHtml: insert_adjacent_return.append,
+		appendBodyHtml: function (data, isText) { insert_adjacent_return.append(document.body, data, isText); },
+		prependHtml: insert_adjacent_return.prepend,
+
 		//dom document tool
-		appendHtml: dom_document_tool.appendHtml,
-		appendBodyHtml: dom_document_tool.appendBodyHtml,
-		prependHtml: dom_document_tool.prependHtml,
 		querySelectorByAttr: dom_document_tool.querySelectorByAttr,
 		getSearchPart: dom_document_tool.getSearchPart,
 		dispatchEventByName: dom_document_tool.dispatchEventByName,

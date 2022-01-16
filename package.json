@@ -35,6 +35,7 @@
     "format-error-tool": "^1.0.1",
     "htm-tool-css": "^1.0.1",
     "htm-tool-ui": "^1.0.15",
+    "insert-adjacent-return": "^1.0.1",
     "path-tool": "^1.0.1",
     "query-by-name-path": "^1.0.1",
     "tmkt": "^1.0.7"
