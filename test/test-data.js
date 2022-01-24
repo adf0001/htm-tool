@@ -74,8 +74,8 @@ module.exports = {
 		ht.addCssText('#divResult3 span.si{background:yellow;}', 'myStyle1');
 		ht('divResult3').innerHTML = '<span class=si>aaa</span> <span class=si>bbb</span>';
 
-		return "<span class='ht-cmd' onclick=\"ht('myStyle1').textContent='#divResult3 span.si{background:red;}'\">red</span> " +
-			"<span class='ht-cmd'  onclick=\"ht.addCssText('#divResult3 span.si{background:blue;}','myStyle1')\">blue</span>";
+		return "<span class='ht cmd' onclick=\"ht('myStyle1').textContent='#divResult3 span.si{background:red;}'\">red</span> " +
+			"<span class='ht cmd'  onclick=\"ht.addCssText('#divResult3 span.si{background:blue;}','myStyle1')\">blue</span>";
 	},
 	"appendHtml()": function (done) {
 		var a = ht.appendHtml('divResult3', '<span>aa</span> <span>bb</span> ');
@@ -165,17 +165,17 @@ module.exports = {
 		);
 	},
 
-	"css.ht-cmd": function (done) {
-		return "<span class='ht-cmd'>cmd .ht-cmd style sample</span>";
+	"css .ht.cmd": function (done) {
+		return "<span class='ht cmd'>cmd .ht cmd style sample</span>";
 	},
-	"css.ht-hover": function (done) {
-		return "<span class='ht-hover'>cmd .ht-hover style sample</span>";
+	"css .ht.hover": function (done) {
+		return "<span class='ht hover'>cmd .ht hover style sample</span>";
 	},
-	"css.ht-selected & setSelected()": function (done) {
-		return "<span class='ht-selected'>cmd .ht-selected style sample</span>" +
-			"<div><span>111 </span><span>222 </span><span>333 </span><span>444 </span>" +
-			"<label><input type=checkbox onchange='ht.setSelected([parentNode.parentNode.childNodes[0],parentNode.parentNode.childNodes[2]]," +
-			"[parentNode.parentNode.childNodes[1],parentNode.parentNode.childNodes[3]],this.checked);'></input>toggle</label>" +
+	"css .ht.selected & setSelected()": function (done) {
+		return "<span class='ht selected'>css .ht.selected style sample</span>" +
+			"<div><span>111 </span><span class='selected'>222 </span><span>333 </span><span class='selected'>444 </span>" +
+			"<label><input type=checkbox onchange=\"var chs=parentNode.parentNode.childNodes;"+
+			"ht.setElClass('selected',null,null,[chs[0],chs[1],chs[2],chs[3]]);\"></input>toggle</label>" +
 			"</div>";
 	},
 

@@ -121,6 +121,10 @@ module.exports = Object.assign(
 		selectRadioList: htm_tool_ui.selectRadioList,
 		selectCheckboxList: htm_tool_ui.selectCheckboxList,
 		selectButtonList: htm_tool_ui.selectButtonList,
+		
+		//htm_tool_css
+		setClass: htm_tool_css,
+		setElClass: htm_tool_css.setEl,
 
 	}
 );
