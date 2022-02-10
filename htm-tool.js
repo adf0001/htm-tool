@@ -1,7 +1,8 @@
 ﻿
 // htm-tool @ npm, htm tool set.
 
-var ele = require("element-tool");
+var ele = require("ele-tool");
+var ele_id = require("ele-id");
 var element_offset = require("element-offset");
 var tmkt = require("tmkt");
 var path_tool = require("path-tool");
@@ -32,8 +33,8 @@ module.exports = Object.assign(
 		//ele
 		ele: ele,
 
-		eleFromId: ele.fromId,
-		eleId: ele.id,
+		eleFromId: ele_id.from,
+		eleId: ele_id,
 
 		eleOffset: element_offset,
 
