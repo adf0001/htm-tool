@@ -174,11 +174,16 @@ module.exports = {
 	"css .ht.selected & setSelected()": function (done) {
 		return "<span class='ht selected'>css .ht.selected style sample</span>" +
 			"<div><span>111 </span><span class='selected'>222 </span><span>333 </span><span class='selected'>444 </span>" +
-			"<label><input type=checkbox onchange=\"var chs=parentNode.parentNode.childNodes;"+
+			"<label><input type=checkbox onchange=\"var chs=parentNode.parentNode.childNodes;" +
 			"ht.setElClass('selected',null,null,[chs[0],chs[1],chs[2],chs[3]]);\"></input>toggle</label>" +
 			"</div>";
 	},
 
+	"link check": function (done) {
+		done(!(
+			ht.pathKey
+		));
+	},
 
 };
 

@@ -45,8 +45,10 @@ module.exports = Object.assign(
 		dateDiffDhm: tmkt.diffDhm,
 
 		//path
+		path_tool: path_tool,
 		dirPart: path_tool.dirPart,
 		normalizePath: path_tool.normalize,
+		pathKey: path_tool.keyString,
 
 		//css tool
 		addCssText: add_css_text,
@@ -122,7 +124,7 @@ module.exports = Object.assign(
 		selectRadioList: htm_tool_ui.selectRadioList,
 		selectCheckboxList: htm_tool_ui.selectCheckboxList,
 		selectButtonList: htm_tool_ui.selectButtonList,
-		
+
 		//htm_tool_css
 		setClass: htm_tool_css,
 		setElClass: htm_tool_css.setEl,
