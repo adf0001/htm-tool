@@ -85,12 +85,12 @@ module.exports = {
 		var a = ht.appendBodyHtml('<span>aa</span> <span>bb</span> ');
 		return a.textContent == 'aa'
 	},
-	"querySelectorByAttr()": function (done) {
+	"query_by_attribute()": function (done) {
 		ht('divResult3').innerHTML = '<span myattr=11>aaa</span> <span myattr=22>bbb</span> <b myattr=22>ccc</b> <b myattr=22>ddd</b>';
-		return ht.querySelectorByAttr('divResult3', '', 'myattr').getAttribute('myattr') === '11' &&
-			ht.querySelectorByAttr('divResult3', '', 'myattr', '22').textContent === 'bbb' &&
-			ht.querySelectorByAttr('divResult3', 'b', 'myattr', '22').textContent === 'ccc' &&
-			ht.querySelectorByAttr('divResult3', 'b', 'myattr', '22', ':nth-of-type(2)').textContent === 'ddd';
+		return ht.query_by_attribute('divResult3', '', 'myattr').getAttribute('myattr') === '11' &&
+			ht.query_by_attribute('divResult3', '', 'myattr', '22').textContent === 'bbb' &&
+			ht.query_by_attribute('divResult3', 'b', 'myattr', '22').textContent === 'ccc' &&
+			ht.query_by_attribute('divResult3', 'b', 'myattr', '22', ':nth-of-type(2)').textContent === 'ddd';
 	},
 	"queryByNamePath()": function (done) {
 		ht('divResult3').innerHTML = '\
@@ -125,11 +125,11 @@ module.exports = {
 			ht.queryByNamePath('divResult3', 'b.e') === null && 	//strict mode
 			ht.queryByNamePath('divResult3', 'b.d.e').textContent === 'eee' 	//strict mode
 	},
-	"getSearchPart()": function (done) {
-		return ht.getSearchPart('a', '?aa=1&a=2') === '2' &&
-			ht.getSearchPart('aa', '?aa=1&a=2') === '1' &&
-			ht.getSearchPart('a', '?aa=1&a=2&cc=3') === '2' &&
-			ht.getSearchPart('d', '?aa=1&a=2&cc=3') === null
+	"get_search_part()": function (done) {
+		return ht.get_search_part('a', '?aa=1&a=2') === '2' &&
+			ht.get_search_part('aa', '?aa=1&a=2') === '1' &&
+			ht.get_search_part('a', '?aa=1&a=2&cc=3') === '2' &&
+			ht.get_search_part('d', '?aa=1&a=2&cc=3') === null
 	},
 	"formatError() & Error()": function (done) {
 		var err1 = ht.formatError('err1', 'key1', { a: 1, b: 2 });
@@ -171,7 +171,7 @@ module.exports = {
 	"css .ht.hover": function (done) {
 		return "<span class='ht hover'>cmd .ht hover style sample</span>";
 	},
-	"css .ht.selected & setSelected()": function (done) {
+	"css .ht.selected & setElClass()": function (done) {
 		return "<span class='ht selected'>css .ht.selected style sample</span>" +
 			"<div><span>111 </span><span class='selected'>222 </span><span>333 </span><span class='selected'>444 </span>" +
 			"<label><input type=checkbox onchange=\"var chs=parentNode.parentNode.childNodes;" +
@@ -180,9 +180,13 @@ module.exports = {
 	},
 
 	"link check": function (done) {
-		done(!(
-			ht.pathKey
-		));
+		for (var i in ht) {
+			if (typeof ht[i] === "undefined") {
+				done("undefined: " + i)
+				return;
+			}
+		}
+		done(false);
 	},
 
 };

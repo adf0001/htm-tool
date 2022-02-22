@@ -1,13 +1,12 @@
 ﻿
 // htm-tool @ npm, htm tool set.
 
-var ele = require("ele-tool");
+var ele = require("get-element-by-id");
 var ele_id = require("ele-id");
 var element_offset = require("element-offset");
 var tmkt = require("tmkt");
 var path_tool = require("path-tool");
 var add_css_text = require("add-css-text");
-var dom_document_tool = require("dom-document-tool");
 var insert_adjacent_return = require("insert-adjacent-return");
 var query_by_name_path = require("query-by-name-path");
 var create_assign = require("create-assign");
@@ -17,6 +16,11 @@ var htm_tool_css = require("htm-tool-css");
 var bind_ui = require("bind-ui");
 var htm_tool_ui = require("htm-tool-ui");
 var bind_element = require("bind-element");
+
+var observe_single_mutation = require("observe-single-mutation");
+var dispatch_event_by_name = require("dispatch-event-by-name");
+var query_by_attribute = require("query-by-attribute");
+var get_search_part = require("get-search-part");
 
 // global variable name
 var globalVarName = "htm-tool@npm";
@@ -61,10 +65,10 @@ module.exports = Object.assign(
 		prependHtml: insert_adjacent_return.prepend,
 
 		//dom document tool
-		querySelectorByAttr: dom_document_tool.querySelectorByAttr,
-		getSearchPart: dom_document_tool.getSearchPart,
-		dispatchEventByName: dom_document_tool.dispatchEventByName,
-		observeSingleMutation: dom_document_tool.observeSingleMutation,
+		query_by_attribute: query_by_attribute,
+		get_search_part: get_search_part,
+		dispatch_event_by_name: dispatch_event_by_name,
+		observe_single_mutation: observe_single_mutation,
 
 		//query by name path
 		query_by_name_path: query_by_name_path,
@@ -97,9 +101,6 @@ module.exports = Object.assign(
 		//bind-element
 		bindElement: bind_element,
 		bindElementArray: bind_element.array,
-
-		//htm-tool css
-		setSelected: htm_tool_css.setSelected,
 
 		//------------------------------
 		//htm-tool ui
