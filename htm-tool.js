@@ -1,7 +1,7 @@
 ﻿
 // htm-tool @ npm, htm tool set.
 
-var ele = require("get-element-by-id");
+var get_element_by_id = require("get-element-by-id");
 var ele_id = require("ele-id");
 var element_offset = require("element-offset");
 var tmkt = require("tmkt");
@@ -28,36 +28,54 @@ var globalVarName = "htm-tool@npm";
 //////////////////////////////////////////////////////////////////////////////////////////
 // export module
 
-module.exports = Object.assign(
-	function () { return ele.apply(this, arguments); },
+module.exports = exports = Object.assign(
+	function () { return get_element_by_id.apply(this, arguments); },	//entry
+
+	htm_tool_ui,	//full set
+
 	{
 		//global var
 		globalVarName: globalVarName,
 
-		//ele
-		ele: ele,
+		//get_element_by_id
+		get_element_by_id: get_element_by_id,
+		getEelementById: get_element_by_id,
+
+		ele: get_element_by_id,
+
+		//ele_id
+		ele_id: ele_id,
+		eleId: ele_id,
 
 		eleFromId: ele_id.from,
-		eleId: ele_id,
+
+		//element_offset
+		element_offset: element_offset,
+		elementOffset: element_offset,
 
 		eleOffset: element_offset,
 
 		//tmkt
 		tmkt: tmkt,
+
 		dateString19: tmkt.toString19,
 		dateString14: tmkt.toString14,
 		dateDiffDhm: tmkt.diffDhm,
 
 		//path
 		path_tool: path_tool,
+
 		dirPart: path_tool.dirPart,
 		normalizePath: path_tool.normalize,
 		pathKey: path_tool.keyString,
 
 		//css tool
+		add_css_text: add_css_text,
 		addCssText: add_css_text,
 
 		//insert adjacent
+		insert_adjacent_return: insert_adjacent_return,
+
 		insertAdjacent: insert_adjacent_return,
 
 		appendHtml: insert_adjacent_return.append,
@@ -66,9 +84,21 @@ module.exports = Object.assign(
 
 		//dom document tool
 		query_by_attribute: query_by_attribute,
+		queryByAttribute: query_by_attribute,
+
+		queryByAttr: query_by_attribute,
+
+		//get_search_part
 		get_search_part: get_search_part,
+		getSearchPart: get_search_part,
+
+		//dispatch_event_by_name
 		dispatch_event_by_name: dispatch_event_by_name,
+		dispatchEventByName: dispatch_event_by_name,
+
+		//observe_single_mutation
 		observe_single_mutation: observe_single_mutation,
+		observeSingleMutation: observe_single_mutation,
 
 		//query by name path
 		query_by_name_path: query_by_name_path,
@@ -80,6 +110,8 @@ module.exports = Object.assign(
 		deriveObject: create_assign,
 
 		//error
+		format_error_tool: format_error_tool,
+
 		formatError: format_error_tool,
 		Error: format_error_tool,
 
@@ -89,8 +121,9 @@ module.exports = Object.assign(
 		//defaultValueFilter: defaultValueFilter,
 		//mapValue: mapValue,
 
-		//xhr
+		//browser_http_request, xhr
 		browser_http_request: browser_http_request,
+
 		httpRequest: browser_http_request.requestText,
 		httpRequestJson: browser_http_request.requestJson,
 
@@ -99,34 +132,20 @@ module.exports = Object.assign(
 		bindUi: bind_ui,
 
 		//bind-element
+		bind_element: bind_element,
 		bindElement: bind_element,
 		bindElementArray: bind_element.array,
 
-		//------------------------------
-		//htm-tool ui
+		//htm_tool_ui
+		htm_tool_ui: htm_tool_ui,
+
 		ui: htm_tool_ui,
 
-		//log
-		show_log: htm_tool_ui.show_log,
-		showLog: htm_tool_ui.showLog,
-
-		//drag
-		drag: htm_tool_ui.drag,
-
-		//popup
-		popup: htm_tool_ui.popup,
-
-		showPopupHtml: htm_tool_ui.showPopupHtml,
-
-		alert: htm_tool_ui.alert,
-		confirm: htm_tool_ui.confirm,
-		confirmYnc: htm_tool_ui.confirmYnc,
-		prompt: htm_tool_ui.prompt,
-		selectRadioList: htm_tool_ui.selectRadioList,
-		selectCheckboxList: htm_tool_ui.selectCheckboxList,
-		selectButtonList: htm_tool_ui.selectButtonList,
-
 		//htm_tool_css
+		htm_tool_css: htm_tool_css,
+
+		css: htm_tool_css,
+
 		setClass: htm_tool_css,
 		setElClass: htm_tool_css.setEl,
 

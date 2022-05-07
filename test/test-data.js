@@ -180,12 +180,15 @@ module.exports = {
 	},
 
 	"link check": function (done) {
+		var a = [];
 		for (var i in ht) {
 			if (typeof ht[i] === "undefined") {
 				done("undefined: " + i)
 				return;
 			}
+			a[a.length] = i;
 		}
+		console.log(a.join(", "));
 		done(false);
 	},
 
