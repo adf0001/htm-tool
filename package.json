@@ -1,8 +1,8 @@
 {
   "name": "htm-tool",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "htm tool set",
-  "main": "htm-tool.js",
+  "main": "index.js",
   "directories": {
     "test": "test"
   },

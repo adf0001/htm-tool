@@ -1,7 +1,7 @@
 ﻿
 // global, for html page
 
-ht = require("../htm-tool.js");
+ht = require("../index.js");
 
 module.exports = {
 
