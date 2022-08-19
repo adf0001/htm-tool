@@ -171,25 +171,24 @@ module.exports = {
 	"css .ht.hover": function (done) {
 		return "<span class='ht hover'>cmd .ht hover style sample</span>";
 	},
-	"css .ht.selected & setElClass()": function (done) {
+	"css .ht.selected & setClass()": function (done) {
 		return "<span class='ht selected'>css .ht.selected style sample</span>" +
 			"<div><span>111 </span><span class='selected'>222 </span><span>333 </span><span class='selected'>444 </span>" +
 			"<label><input type=checkbox onchange=\"var chs=parentNode.parentNode.childNodes;" +
-			"ht.setElClass('selected',null,null,[chs[0],chs[1],chs[2],chs[3]]);\"></input>toggle</label>" +
+			"ht.css.setByElement('selected',null,null,[chs[0],chs[1],chs[2],chs[3]]);\"></input>toggle</label>" +
 			"</div>";
 	},
 
-	"link check": function (done) {
-		var a = [];
+	"check exports": function (done) {
 		for (var i in ht) {
-			if (typeof ht[i] === "undefined") {
-				done("undefined: " + i)
-				return;
-			}
-			a[a.length] = i;
+			if (typeof ht[i] === "undefined") { done("undefined: " + i); return; }
 		}
-		console.log(a.join(", "));
 		done(false);
+
+		console.log(ht);
+		var list = "export list: " + Object.keys(ht).join(", ");
+		console.log(list);
+		return list;
 	},
 
 };
